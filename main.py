@@ -7,13 +7,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-intents = discord.Intents.default()
-intents.message_content = True
-
 bot = commands.Bot(
   command_prefix = "demo.",
   help_command = None,
-  intents = intents,
+  intents = discord.Intents.all(),
   activity = discord.Activity(
     type = discord.ActivityType.custom,
     name = " ",
