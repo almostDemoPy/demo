@@ -76,9 +76,42 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
               break
       else:
         if user.activity is not None:
-          userCustomStatus = f"\n\n> {user.activity.state}"
+          if isinstance(user.activity, discord.CustomActivity):
+            userCustomStatus = f"\n\n> {user.activity.state}"
+          else:
+            for activity in user.activities:
+              if isinstance(activity, discord.CustomActivity):
+                activityEmoji = ""
+                activityName = ""
+                if activity.emoji is not None:
+                  if activity.emoji.is_custom_emoji():
+                    activityEmoji = self.bot.get_emoji(activity.emoji.id)
+                    if activityEmoji is None:
+                      activityEmoji = activity.emoji
+                  else:
+                    activityEmoji = activity.emoji
+                if activity.name is not None:
+                  activityName = f" {activity.name}"
+                userCustomStatus = f"\n\n> {activityEmoji}{activityName}"
+                break
+      userPublicFlagsStr = []
+      userPublicFlagsList = user.public_flags.all()
+      if not user.bot:
+        for flag in userPublicFlagsList:
+          if flag.name in emojis:
+            flagIcon = self.bot.get_emoji(emojis[flag.name])
+            userPublicFlagsStr.append(str(flagIcon))
+      else:
+        if user.public_flags.verified_bot:
+          left = self.bot.get_emoji(emojis["verified_bot_left"])
+          right = self.bot.get_emoji(emojis["verified_bot_right"])
+          userPublicFlagsStr.append(f"{left}{right}")
+        else:
+          flagIcon = self.bot.get_emoji(emojis["bot"])
+          userPublicFlagsStr.append(str(flagIcon))
+      userPublicFlags = " ".join(userPublicFlagsStr)
       embed = discord.Embed(
-        title = f"{user.name} {desktopStatus}{webStatus}{mobileStatus}",
+        title = f"{user.name} {desktopStatus}{webStatus}{mobileStatus}{userPublicFlags}",
         description = f"""
 **User ID** : || ` {user.id} ` ||
 **Created** : <t:{int(user.created_at.timestamp())}:R>
@@ -102,6 +135,12 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
           value = f"> {userBoostedSince}",
           inline = True
         )
+      if user.timed_out_until is not None:
+        embed.add_field(
+          name = "Timed Out Until :",
+          value = f"> <t:{int(user.timed_out_until.timestamp())}:R>",
+          inline = True
+        )
       if user2.banner is not None:
         embed.set_image(
           url = user2.banner.url
@@ -110,17 +149,37 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
       view = None
       for activity in user.activities:
         if activity.type == discord.ActivityType.playing:
-          activityDetails = f"\n**Details** : ` {activity.details} `" if activity.details is not None else ""
-          activityState = f"\n**State** : ` {activity.state} `" if activity.state is not None else ""
-          gameEmbed = discord.Embed(
-            title = "Playing a Game",
-            description = f"""
-**Name** : ` {activity.name} `{activityDetails}{activityState}
-            """,
-            color = 0x2b2d31
-          ).set_thumbnail(
-            url = activity.large_image_url if activity.large_image_url is not None else activity.small_image_url
-          )
+          gameEmbedExists = False
+          for embed in embeds:
+            if embed.title == "Playing a Game":
+              gameEmbedExists = True
+              break
+          if gameEmbedExists:
+            continue
+          try:
+            activityDetails = f"\n**Details** : ` {activity.details} `" if activity.details is not None else ""
+            activityState = f"\n**State** : ` {activity.state} `" if activity.state is not None else ""
+            gameStart = f"\n**Start** : <t:{int(activity.start.timestamp())}:R>" if activity.start is not None else ""
+            gameEnd = f"\n**End** : <t:{int(activity.end.timestamp())}:R>" if activity.end is not None else ""
+            gameEmbed = discord.Embed(
+              title = "Playing a Game",
+              description = f"""
+  **Name** : ` {activity.name} `{activityDetails}{activityState}{gameStart}{gameEnd}
+              """,
+              color = 0x2b2d31
+            ).set_thumbnail(
+              url = activity.large_image_url if activity.large_image_url is not None else activity.small_image_url
+            )
+          except:
+            gameStart = f"\n**Start** : <t:{int(activity.start.timestamp())}:R>" if activity.start is not None else ""
+            gameEnd = f"\n**End** : <t:{int(activity.end.timestamp())}:R>" if activity.end is not None else ""
+            gameEmbed = discord.Embed(
+              title = "Playing a Game",
+              description = f"""
+**Name** : ` {activity.name} ` {gameStart}{gameEnd}
+              """,
+              color = 0x2b2d31
+            )
           embeds.append(gameEmbed)
         elif isinstance(activity, discord.Spotify):
           artistsList = [f"` {artist} `" for artist in activity.artists]
