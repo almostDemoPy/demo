@@ -14,6 +14,12 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
         callback = self.get_profile
       )
     )
+    self.bot.tree.add_command(
+      app_commands.ContextMenu(
+        name = "User Avatar",
+        callback = self.get_avatar
+      )
+    )
     with open('json/emojis.json', 'r') as f:
       self.emojis = json.load(f)
     print("Loaded command group : user")
@@ -229,6 +235,36 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
   )
   async def userProfile(self, interaction : discord.Interaction, member : discord.Member = None):
     await self.get_profile(interaction, member if member is not None else interaction.user)
+
+  async def get_avatar(self, interaction : discord.Interaction, member : discord.Member):
+    response = interaction.response
+    if member.guild_avatar is not None:
+      avatarUrl = member.guild_avatar.url
+    elif member.avatar is not None:
+      avatarUrl = member.avatar.url
+    else:
+      avatarUrl = member.display_avatar
+    embed = discord.Embed(
+      color = 0x2b2d31
+    ).set_author(
+      name = member.display_name,
+      icon_url = member.display_avatar
+    ).set_image(
+      url = avatarUrl
+    )
+    await response.send_message(
+      embed = embed
+    )
+
+  @app_commands.command(
+    name = "avatar",
+    description = "Retrieve a user's avatar"
+  )
+  @app_commands.describe(
+    member = "Select a member"
+  )
+  async def userAvatar(self, interaction : discord.Interaction, member : discord.Member = None):
+    await self.get_avatar(interaction, member if member is not None else interaction.user)
 
 async def setup(bot):
   await bot.add_cog(UserCommands(bot))
