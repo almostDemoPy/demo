@@ -116,10 +116,11 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
           flagIcon = self.bot.get_emoji(emojis["bot"])
           userPublicFlagsStr.append(str(flagIcon))
       userPublicFlags = " ".join(userPublicFlagsStr)
+      userNickname = f"\n*Nickname** : ` {user.nick} `" if user.nick is not None else ""
       embed = discord.Embed(
         title = f"{user.name} {desktopStatus}{webStatus}{mobileStatus}{userPublicFlags}",
         description = f"""
-**User ID** : || ` {user.id} ` ||
+**User ID** : || ` {user.id} ` ||{userNickname}
 **Created** : <t:{int(user.created_at.timestamp())}:R>
 **Joined** : <t:{int(user.joined_at.timestamp())}:R>{userCustomStatus}
         """,
