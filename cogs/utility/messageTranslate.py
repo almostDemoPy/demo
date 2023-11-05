@@ -68,7 +68,7 @@ class MessageTranslate(commands.Cog):
   @app_commands.describe(
     text = "The text to translate",
     src = "Origin language of text [ defaults to English ]",
-    dest = "Language to translate the text to [ defaults to Engligh ]"
+    dest = "Language to translate the text to [ defaults to English ]"
   )
   @app_commands.autocomplete(
     src = langAutocomplete,
@@ -95,6 +95,8 @@ class MessageTranslate(commands.Cog):
       return
     else:
       src = src
+    if translator.detect(text).lang != src:
+      text = translator.translate(text, dest = src).text
     if dest not in constants.LANGUAGES:
       err = discord.Embed(
         description = f"There is no such language as ` {dest} `",
