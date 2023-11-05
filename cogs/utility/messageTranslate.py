@@ -15,30 +15,91 @@ class MessageTranslate(commands.Cog):
     )
     print("Loaded context menu : Translate")
     print("Loaded command : /translate")
+    print("Loaded command : demo.translate")
 
   async def messageTranslate(self, interaction : discord.Interaction, message : discord.Message):
-    response = interaction.response
-    author = message.author
-    translator = Translator()
-    if (translator.translate(message.content, src = translator.detect(message.content).lang)).text.lower() == message.content.lower():
+    try:
+      response = interaction.response
+      author = message.author
+      translator = Translator()
+      if (translator.translate(message.content, src = translator.detect(message.content).lang)).text.lower() == message.content.lower():
+        err = discord.Embed(
+          description = "This message is already in English language ! Cannot translate it any further",
+          color = 0xff3131
+        ).set_author(
+          name = self.bot.user.display_name,
+          icon_url = self.bot.user.display_avatar
+        )
+        await response.send_message(
+          embed = err,
+          ephemeral = True
+        )
+        return
+      translation = translator.translate(message.content)
+      embed = discord.Embed(
+        color = 0x2b2d31
+      ).set_author(
+        name = author.display_name,
+        icon_url = author.display_avatar
+      ).add_field(
+        name = f"Original Message : ` {translation.src} `",
+        value = translation.origin,
+        inline = False
+      ).add_field(
+        name = f"Translation : ` {translation.dest} `",
+        value = translation.text,
+        inline = False
+      )
+      await response.send_message(
+        embed = embed
+      )
+    except:
+      traceback.print_exc()
+
+  @commands.command(
+    name = "translate",
+    description = "Translate the referenced ( replied ) message"
+  )
+  async def ctxTranslate(self, ctx):
+    author = ctx.author
+    if author.bot:
+      return
+    if ctx.message.reference is None:
       err = discord.Embed(
-        description = "This message is already in English language ! Cannot translate it any further",
+        description = "You must reply to a message needed to translate to use this command !",
         color = 0xff3131
       ).set_author(
         name = self.bot.user.display_name,
         icon_url = self.bot.user.display_avatar
       )
-      await response.send_message(
+      await ctx.reply(
         embed = err,
-        ephemeral = True
+        mention_author = False,
+        delete_after = 10
       )
       return
+    if ctx.message.reference.message_id is None:
+      err = discord.Embed(
+        description = "The referenced ( replied ) message does not exist",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await ctx.reply(
+        embed = err,
+        mention_author = False,
+        delete_after = 10
+      )
+      return
+    message = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+    translator = Translator()
     translation = translator.translate(message.content)
     embed = discord.Embed(
       color = 0x2b2d31
     ).set_author(
-      name = author.display_name,
-      icon_url = author.display_avatar
+      name = message.author.display_name,
+      icon_url = message.author.display_avatar
     ).add_field(
       name = f"Original Message : ` {translation.src} `",
       value = translation.origin,
@@ -48,9 +109,14 @@ class MessageTranslate(commands.Cog):
       value = translation.text,
       inline = False
     )
-    await response.send_message(
-      embed = embed
+    await message.reply(
+      embed = embed,
+      mention_author = False
     )
+
+  @ctxTranslate.error
+  async def error(self, ctx, error):
+    traceback.print_exc()
 
   async def langAutocomplete(self, interaction : discord.Interaction, current : str):
     return [
