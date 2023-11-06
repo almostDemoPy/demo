@@ -126,6 +126,10 @@ class PollModal(ui.Modal):
       user = interaction.user
       optionsList = []
       embed = discord.Embed(
+        description = f"""
+**Question** :
+{self.question}
+        """,
         color = 0x2b2d31
       ).set_author(
         name = user.display_name,
