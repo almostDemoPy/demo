@@ -1,0 +1,9 @@
+.env
+cogs/admin/__pycache__/
+cogs/events/__pycache__/
+cogs/info/__pycache__/
+cogs/events/OnMessage.py
+cogs/utility/__pycache__/
+cogs/fun/__pycache__/
+json/
+.gitignore
