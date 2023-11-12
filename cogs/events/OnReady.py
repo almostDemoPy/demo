@@ -12,7 +12,7 @@ class OnReady(commands.Cog):
   @commands.Cog.listener()
   async def on_ready(self):
     print(
-      "< DEMO > is online"
+      "demo is online"
     )
 
 async def setup(bot):
