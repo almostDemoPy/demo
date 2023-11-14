@@ -62,6 +62,7 @@ class SelectGame(ui.Select):
 class HowTo(commands.GroupCog, name = "how", description = "How commands"):
   def __init__(self, bot):
     self.bot = bot
+    print("Loaded command : /how to play")
 
   howto = app_commands.Group(
     name = "to",
