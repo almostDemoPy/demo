@@ -54,6 +54,8 @@ class TextSelectSide(ui.View):
             winner = "White wins !"
           elif self.board.outcome() == chess.BLACK:
             winner = "Black wins !"
+          else:
+            winner = f"{self.board.outcome()} wins !"
           embed.description = winner
           await self.boardMsg.edit(
             embed = embed
@@ -172,11 +174,11 @@ class TextSelectSide(ui.View):
                 )
               else:
                 embed.set_author(
-                  name = self.user.display_name + (" | Check" if self.board.is_check() else "") + (" | Checkmate" if self.board.is_checkmate() else "") + (" | Stalemate" if self.board.is_stalemate() else ""),
+                  name = self.user.display_name + (" | Check" if botMove and self.board.is_check() else "") + (" | Checkmate" if botMove and self.board.is_checkmate() else "") + (" | Stalemate" if botMove and self.board.is_stalemate() else ""),
                   icon_url = self.user.display_avatar
                 )
               embed.set_footer(
-                text = self.member.display_name + (f" | {msgMove}" if botMove else "") + (" | Check" if self.board.is_check() else "") + (" | Checkmate" if self.board.is_checkmate() else "") + (" | Stalemate" if self.board.is_stalemate() else ""),
+                text = self.member.display_name + (f" | {msgMove}" if botMove else "") + (" | Check" if not botMove and self.board.is_check() else "") + (" | Checkmate" if not botMove and self.board.is_checkmate() else "") + (" | Stalemate" if not botMove and self.board.is_stalemate() else ""),
                 icon_url = self.member.display_avatar
               )
           elif players[str(self.member.id)] == "black":
@@ -190,7 +192,7 @@ class TextSelectSide(ui.View):
               )
             else:
               embed.set_author(
-                name = self.member.display_name + (f" | {msgMove}" if botMove else "") + (" | Check" if self.board.is_check() else "") + (" | Checkmate" if self.board.is_checkmate() else "") + (" | Stalemate" if self.board.is_stalemate() else ""),
+                name = self.member.display_name + (f" | {msgMove}" if botMove else "") + (" | Check" if not botMove and self.board.is_check() else "") + (" | Checkmate" if not botMove and self.board.is_checkmate() else "") + (" | Stalemate" if not botMove and self.board.is_stalemate() else ""),
                 icon_url = self.member.display_avatar
               )
               if not botMove:
@@ -487,9 +489,9 @@ class Chess(commands.Cog):
       for n in range(8):
         description += rowIndicatorList[(n)]
         if n % 2 == 0:
-          description += ":green_square::white_large_square::green_square::white_large_square::green_square::white_large_square::green_square::white_large_square:\n"
-        else:
           description += ":white_large_square::green_square::white_large_square::green_square::white_large_square::green_square::white_large_square::green_square:\n"
+        else:
+          description += ":green_square::white_large_square::green_square::white_large_square::green_square::white_large_square::green_square::white_large_square:\n"
       description += ":black_large_square::regional_indicator_a::regional_indicator_b::regional_indicator_c::regional_indicator_d::regional_indicator_e::regional_indicator_f::regional_indicator_g::regional_indicator_h:"
       embed = discord.Embed(
         description = description,
