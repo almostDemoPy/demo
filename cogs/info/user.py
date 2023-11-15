@@ -280,7 +280,7 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
     self.bot = bot
     self.bot.tree.add_command(
       app_commands.ContextMenu(
-        name = "User Info",
+        name = "Info",
         callback = self.user_info
       )
     )
