@@ -302,7 +302,7 @@ class ActionSelect(ui.Select):
       if action == "Timeout":
         if not guildUser.guild_permissions.moderate_members:
           err = discord.Embed(
-            description = "You do not have permission to timeout a member",
+            description = f"You do not have permission to timeout {self.member.mention}",
             color = 0xff3131
           ).set_author(
             name = self.bot.user.display_name,
@@ -314,7 +314,7 @@ class ActionSelect(ui.Select):
           return
         if not guildBot.guild_permissions.moderate_members:
           err = discord.Embed(
-            description = "I do not have permission to timeout a member",
+            description = f"I do not have permission to timeout {self.member.mention}",
             color = 0xff3131
           ).set_author(
             name = self.bot.user.display_name,
@@ -330,28 +330,26 @@ class ActionSelect(ui.Select):
       elif action == "Kick":
         if not guildUser.guild_permissions.kick_members:
           err = discord.Embed(
-            description = "You do not have permission to kick a member",
+            description = f"You do not have permission to kick {self.member.mention}",
             color = 0xff3131
           ).set_author(
             name = self.bot.user.display_name,
             icon_url = self.bot.user.display_avatar
           )
           await response.edit_message(
-            embed = err,
-            ephemeral = True
+            embed = err
           )
           return
         if not guildBot.guild_permissions.kick_members:
           err = discord.Embed(
-            description = "I do not have permission to kick a member",
+            description = f"I do not have permission to kick {self.member.mention}",
             color = 0xff3131
           ).set_author(
             name = self.bot.user.display_name,
             icon_url = self.bot.user.display_avatar
           )
           await response.edit_message(
-            embed = err,
-            ephemeral = True
+            embed = err
           )
           return
         await response.send_modal(
