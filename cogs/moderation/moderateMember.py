@@ -259,6 +259,43 @@ class KickModal(ui.Modal):
   async def on_error(self, interaction : discord.Interaction, error):
     traceback.print_exc()
 
+class BanModal(ui.Modal):
+  def __init___(self, member, user, bot):
+    super().__init__(
+      title = "Moderate > Ban"
+    )
+    self.member = member
+    self.user = user
+    self.bot = bot
+
+  reason = ui.TextInput(
+    label = "reason :",
+    default = "",
+    required = False
+  )
+
+  async def on_submit(self, interaction : discord.Interaction):
+    response = interaction.response
+    user = interaction.user
+    reason = None if str(self.reason) == "" else str(self.reason)
+    embed = discord.Embed(
+      description = f"Successfully banned {self.member.mention}",
+      color = 0x39ff14
+    ).set_author(
+      name = self.bot.user.display_name,
+      icon_url = self.bot.user.display_avatar
+    )
+    await self.member.ban(
+      reason = reason
+    )
+    await response.edit_message(
+      embed = embed,
+      view = None
+    )
+
+  async def on_error(self, interaction : discord.Interaction, error):
+    traceback.print_exc()
+
 class ActionSelect(ui.Select):
   def __init__(self, member, user, bot):
     super().__init__(
@@ -266,6 +303,9 @@ class ActionSelect(ui.Select):
       max_values = 1,
       min_values = 1,
       options = [
+        discord.SelectOption(
+          label = "Ban"
+        ),
         discord.SelectOption(
           label = "Kick"
         ),
@@ -354,6 +394,34 @@ class ActionSelect(ui.Select):
           return
         await response.send_modal(
           KickModal(self.member, self.user, self.bot)
+        )
+      elif action == "Ban":
+        if not guildUser.guild_permissions.ban_members:
+          err = discord.Embed(
+            description = f"You do not have permission to ban {self.member.mention}",
+            color = 0xff3131
+          ).set_author(
+            name = self.bot.user.display_name,
+            icon_url = self.bot.user.display_avatar
+          )
+          await response.edit_message(
+            embed = err
+          )
+          return
+        if not guildBot.guild_permissions.ban_members:
+          err = discord.Embed(
+            description = f"I do nott have permission to ban {self.member.mention}",
+            color = 0xff3131
+          ).set_author(
+            name = self.bot.user.display_name,
+            icon_url = self.bot.user.display_avatar
+          )
+          await response.edit_message(
+            embed = err
+          )
+          return
+        await response.send_modal(
+          BanModal(self.member, self.user, self.bot)
         )
     except:
       traceback.print_exc()
@@ -695,6 +763,91 @@ class ModerateMember(commands.Cog):
     elif isinstance(error, app_commands.MissingPermissions):
       err = discord.Embed(
         description = "I do not have permission to kick a member",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+
+  @moderate.command(
+    name = "ban",
+    description = "Ban a member"
+  )
+  @app_commands.describe(
+    member = "Select a member to ban :",
+    reason = "Reason to ban the member"
+  )
+  @app_commands.checks.has_permissions(
+    ban_members = True
+  )
+  async def moderateBan(self, interaction : discord.Interaction, member : discord.Member, reason : str = None):
+    response = interaction.response
+    user = interaction.user
+    if member == interaction.guild.owner:
+      err = discord.Embed(
+        description = "Unable to ban a **Guild Owner**",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    if member == self.bot.user:
+      err = discord.Embed(
+        description = "Unable to ban myself",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    embed = discord.Embed(
+      description = f"Successfully banned {member.mention}",
+      color = 0x39ff14
+    ).set_author(
+      name = self.bot.user.display_name,
+      icon_url = self.bot.user.display_avatar
+    )
+    await member.ban(
+      reason = reason
+    )
+    await response.send_message(
+      embed = embed,
+      ephemeral = True
+    )
+
+  @moderateBan.error
+  async def error(self, interaction : discord.Interaction, error):
+    traceback.print_exc()
+    if isinstance(error, app_commands.MissingPermissions):
+      err = discord.Embed(
+        description = "You do not have permission to ban a member",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    elif isinstance(error, app_commands.BotMissingPermissions):
+      err = discord.Embed(
+        description = "I do not have permission to ban a member",
         color = 0xff3131
       ).set_author(
         name = self.bot.user.display_name,
