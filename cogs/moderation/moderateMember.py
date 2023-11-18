@@ -336,7 +336,7 @@ class ActionSelect(ui.Select):
             name = self.bot.user.display_name,
             icon_url = self.bot.user.display_avatar
           )
-          await response.send_message(
+          await response.edit_message(
             embed = err,
             ephemeral = True
           )
@@ -349,7 +349,7 @@ class ActionSelect(ui.Select):
             name = self.bot.user.display_name,
             icon_url = self.bot.user.display_avatar
           )
-          await response.send_message(
+          await response.edit_message(
             embed = err,
             ephemeral = True
           )
