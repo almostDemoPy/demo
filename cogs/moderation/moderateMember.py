@@ -189,10 +189,6 @@ class TimeoutModal(ui.Modal):
           ephemeral = True
         )
         return
-      await self.member.timeout(
-        duration,
-        reason = reason
-      )
       timedOutUntil = datetime.today() + duration
       embed = discord.Embed(
         description = f"Successfully timed out {self.member.mention}. The time out expires <t:{int(timedOutUntil.timestamp())}:R>",
@@ -200,6 +196,15 @@ class TimeoutModal(ui.Modal):
       ).set_author(
         name = self.bot.user.display_name,
         icon_url = self.bot.user.display_avatar
+      )
+      if reason is not None:
+        embed.add_field(
+          name = "Reason :",
+          value = reason
+        )
+      await self.member.timeout(
+        duration,
+        reason = reason
       )
       await response.edit_message(
         embed = embed,
@@ -211,6 +216,49 @@ class TimeoutModal(ui.Modal):
   async def on_error(self, interaction : discord.Interaction, error):
     traceback.print_exc()
 
+class KickModal(ui.Modal):
+  def __init__(self, member, user, bot):
+    super().__init__(
+      timeout = None,
+      title = "Moderate > Kick"
+    )
+    self.member = member
+    self.user = user
+    self.bot = bot
+
+  reason = ui.TextInput(
+    label = "reason :",
+    default = "",
+    required = False
+  )
+
+  async def on_submit(self, interaction : discord.Interaction):
+    response = interaction.response
+    user = interaction.user
+    reason = str(self.reason) if str(reason) != "" else None
+    embed = discord.Embed(
+      description = f"Successfully kicked {member.mention} !",
+      color = 0x39ff14
+    ).set_author(
+      name = self.bot.user.display_name,
+      icon_url = self.bot.user.display_avatar
+    )
+    if reason is not None:
+      embed.add_field(
+        name = "Reason :",
+        value = reason
+      )
+    await self.member.kick(
+      reason = reason
+    )
+    await response.edit_message(
+      embed = embed,
+      view = None
+    )
+
+  async def on_error(self, interaction : discord.Interaction, error):
+    traceback.print_exc()
+
 class ActionSelect(ui.Select):
   def __init__(self, member, user, bot):
     super().__init__(
@@ -218,6 +266,9 @@ class ActionSelect(ui.Select):
       max_values = 1,
       min_values = 1,
       options = [
+        discord.SelectOption(
+          label = "Kick"
+        ),
         discord.SelectOption(
           label = "Timeout"
         )
@@ -231,6 +282,9 @@ class ActionSelect(ui.Select):
     try:
       response = interaction.response
       user = interaction.user
+      guild = interaction.guild
+      guildUser = guild.get_member(user.id)
+      guildBot = guild.get_member(self.bot.user.id)
       if user != self.user:
         err = discord.Embed(
           description = "This is not your menu !",
@@ -246,8 +300,62 @@ class ActionSelect(ui.Select):
         return
       action = self.values[0]
       if action == "Timeout":
+        if not guildUser.guild_permissions.moderate_members:
+          err = discord.Embed(
+            description = "You do not have permission to timeout a member",
+            color = 0xff3131
+          ).set_author(
+            name = self.bot.user.display_name,
+            icon_url = self.bot.user.display_avatar
+          )
+          await response.edit_message(
+            embed = err
+          )
+          return
+        if not guildBot.guild_permissions.moderate_members:
+          err = discord.Embed(
+            description = "I do not have permission to timeout a member",
+            color = 0xff3131
+          ).set_author(
+            name = self.bot.user.display_name,
+            icon_url = self.bot.user.display_avatar
+          )
+          await response.edit_message(
+            embed = err
+          )
+          return
         await response.send_modal(
           TimeoutModal(self.member, self.user, self.bot)
+        )
+      elif action == "Kick":
+        if not guildUser.guild_permissions.kick_members:
+          err = discord.Embed(
+            description = "You do not have permission to kick a member",
+            color = 0xff3131
+          ).set_author(
+            name = self.bot.user.display_name,
+            icon_url = self.bot.user.display_avatar
+          )
+          await response.send_message(
+            embed = err,
+            ephemeral = True
+          )
+          return
+        if not guildBot.guild_permissions.kick_members:
+          err = discord.Embed(
+            description = "I do not have permission to kick a member",
+            color = 0xff3131
+          ).set_author(
+            name = self.bot.user.display_name,
+            icon_url = self.bot.user.display_avatar
+          )
+          await response.send_message(
+            embed = err,
+            ephemeral = True
+          )
+          return
+        await response.send_modal(
+          KickModal(self.member, self.user, self.bot)
         )
     except:
       traceback.print_exc()
@@ -262,54 +370,17 @@ class ModerateMember(commands.Cog):
       name = "Moderate",
       callback = self.selectAction
     )
-    self.moderateContextMenu.add_check(
-      self.selectActionCheck
-    )
     self.bot.tree.add_command(
       self.moderateContextMenu
     )
     print("Loaded context menu : moderate")
     print("Loaded command : /moderate timeout")
+    print("Loaded command : /moderate kick")
 
   moderate = app_commands.Group(
     name = "moderate",
     description = "Moderate commands"
   )
-
-  async def selectActionCheck(self, interaction : discord.Interaction):
-    response = interaction.response
-    user = interaction.user
-    guild = interaction.guild
-    botUser = guild.get_member(self.bot.user.id)
-    if user.guild_permissions.moderate_members and botUser.guild_permissions.moderate_members:
-      return True
-    else:
-      if not user.guild_permissions.moderate_members:
-        err = discord.Embed(
-          description = "You do not have permissions to moderate a member !",
-          color = 0xff3131
-        ).set_author(
-          name = self.bot.user.display_name,
-          icon_url = self.bot.user.display_avatar
-        )
-        await response.send_message(
-          embed = err,
-          ephemeral = True
-        )
-        return False
-      if not botUser.guild_permissions.moderate_members:
-        err = discord.Embed(
-          description = "I do not have the permission to moderate a member",
-          color = 0xff3131
-        ).set_author(
-          name = self.bot.user.display_name,
-          icon_url = self.bot.user.display_avatar
-        )
-        await response.send_message(
-          embed = err,
-          ephemeral = True
-        )
-        return False
   
   async def selectAction(self, interaction : discord.Interaction, member : discord.Member):
     try:
@@ -331,6 +402,19 @@ class ModerateMember(commands.Cog):
       if member.bot:
         err = discord.Embed(
           description = "Unable to moderate a **Discord bot**",
+          color = 0xff3131
+        ).set_author(
+          name = self.bot.user.display_name,
+          icon_url = self.bot.user.display_avatar
+        )
+        await response.send_message(
+          embed = err,
+          ephemeral = True
+        )
+        return
+      if member == self.bot.user:
+        err = discord.Embed(
+          description = "Unable to moderate myself",
           color = 0xff3131
         ).set_author(
           name = self.bot.user.display_name,
@@ -393,6 +477,19 @@ class ModerateMember(commands.Cog):
     if member.bot:
       err = discord.Embed(
         description = "Unable to timeout a **Discord bot**",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    if member == self.bot.user:
+      err = discord.Embed(
+        description = "Unable to timeout myself",
         color = 0xff3131
       ).set_author(
         name = self.bot.user.display_name,
@@ -474,10 +571,6 @@ class ModerateMember(commands.Cog):
         ephemeral = True
       )
       return
-    await member.timeout(
-      duration,
-      reason = reason
-    )
     expires = datetime.today() + duration
     embed = discord.Embed(
       description = f"Successfully timed out {member.mention}. The timeout will expire <t:{int(expires.timestamp())}:R>",
@@ -485,6 +578,10 @@ class ModerateMember(commands.Cog):
     ).set_author(
       name = self.bot.user.display_name,
       icon_url = self.bot.user.display_avatar
+    )
+    await member.timeout(
+      duration,
+      reason = reason
     )
     await response.send_message(
       embed = embed,
@@ -510,6 +607,96 @@ class ModerateMember(commands.Cog):
     elif isinstance(error, app_commands.BotMissingPermissions):
       err = discord.Embed(
         description = "I do not have the permission to timeout a member",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+
+  @moderate.command(
+    name = "kick",
+    description = "Kick a member"
+  )
+  @app_commands.describe(
+    member = "Select a member to kick :",
+    reason = "Reason to kick the member"
+  )
+  @app_commands.checks.has_permissions(
+    kick_members = True
+  )
+  async def moderateKick(self, interaction : discord.Interaction, member : discord.Member, reason : str = None):
+    response = interaction.response
+    user = interaction.user
+    if member == interaction.guild.owner:
+      err = discord.Embed(
+        description = "Unable to kick the **Guild Owner**",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    if member == self.bot.user:
+      err = discord.Embed(
+        description = "Unable to kick myself",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    embed = discord.Embed(
+      description = f"Successfully kicked {member.mention}",
+      color = 0x39ff14
+    ).set_author(
+      name = self.bot.user.display_name,
+      icon_url = self.bot.user.display_avatar
+    )
+    if reason is not None:
+      embed.add_field(
+        name = "Reason :",
+        value = reason
+      )
+    await member.kick(
+      reason = reason
+    )
+    await response.send_message(
+      embed = embed,
+      ephemeral = True
+    )
+
+  @moderateKick.error
+  async def error(self, interaction : discord.Interaction, error):
+    traceback.print_exc()
+    if isinstance(error, app_commands.MissingPermissions):
+      err = discord.Embed(
+        description = "You do not have permission to kick a member",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    elif isinstance(error, app_commands.MissingPermissions):
+      err = discord.Embed(
+        description = "I do not have permission to kick a member",
         color = 0xff3131
       ).set_author(
         name = self.bot.user.display_name,
