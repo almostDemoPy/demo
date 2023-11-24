@@ -212,14 +212,27 @@ class UserInfoSelectMenu(ui.Select):
           )
           embeds.append(spotifyEmbed)
       if view is None:
+        view = ui.View().add_item(
+          ui.Button(
+            label = "Profile",
+            url = f"discord://-/users/{user.id}"
+          )
+        )
         await interaction.response.edit_message(
-          embeds = embeds
+          embeds = embeds,
+          view = view
         )
       else:
         for ind, emb in enumerate(embeds):
           if emb.title.startswith("Listening to "):
             embeds.append(embeds.pop(ind))
             break
+        view.add_item(
+          ui.Button(
+            label = "Profile",
+            url = f"discord://-/users/{user.id}"
+          )
+        )
         await response.edit_message(
           embeds = embeds,
           view = view
@@ -497,14 +510,27 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
           )
           embeds.append(spotifyEmbed)
       if view is None:
+        view = ui.View().add_item(
+          ui.Button(
+            label = "Profile",
+            url = f"discord://-/users/{user.id}"
+          )
+        )
         await interaction.response.send_message(
-          embeds = embeds
+          embeds = embeds,
+          view = view
         )
       else:
         for ind, emb in enumerate(embeds):
           if emb.title.startswith("Listening to "):
             embeds.append(embeds.pop(ind))
             break
+        view.add_item(
+          ui.Button(
+            label = "Profile",
+            url = f"discord://-/users/{user.id}"
+          )
+        )
         await response.send_message(
           embeds = embeds,
           view = view
