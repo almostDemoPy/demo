@@ -524,7 +524,7 @@ class ModerateMember(commands.Cog):
     days = "0 - 28 days ( Defaults to 0 days )",
     reason = "Reason to timeout the member"
   )
-  async def moderateTimeout(self, interaction : discord.Interaction, member : discord.Member, seconds : int = 60, minutes : int = 0, hours : int = 0, days : int = 0, reason : str = None):
+  async def moderateTimeout(self, interaction : discord.Interaction, member : discord.Member, seconds : app_commands.Range[int, 0, 2419200] = 60, minutes : app_commands.Range[int, 0, 40320] = 0, hours : app_commands.Range[int, 0, 672] = 0, days : app_commands.Range[int, 0, 28] = 0, reason : str = None):
     response = interaction.response
     user = interaction.user
     if member == interaction.guild.owner:
