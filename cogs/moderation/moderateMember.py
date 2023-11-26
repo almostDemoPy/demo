@@ -410,7 +410,7 @@ class ActionSelect(ui.Select):
           return
         if not guildBot.guild_permissions.ban_members:
           err = discord.Embed(
-            description = f"I do nott have permission to ban {self.member.mention}",
+            description = f"I do not have permission to ban {self.member.mention}",
             color = 0xff3131
           ).set_author(
             name = self.bot.user.display_name,
@@ -442,6 +442,8 @@ class ModerateMember(commands.Cog):
     print("Loaded context menu : moderate")
     print("Loaded command : /moderate timeout")
     print("Loaded command : /moderate kick")
+    print("Loaded command : /moderate ban")
+    print("Loaded command : /moderate unban")
 
   moderate = app_commands.Group(
     name = "moderate",
@@ -624,35 +626,52 @@ class ModerateMember(commands.Cog):
       hours = hours,
       days = days
     )
-    if duration.days > 28:
-      err = discord.Embed(
-        description = "You can only timeout a member for 28 days maximum",
-        color = 0xff3131
+    if int(duration.total_seconds()) == 0:
+      embed = discord.Embed(
+        description = f"Successfully removed {member.mention}'s timeout",
+        color = 0x39ff14
       ).set_author(
         name = self.bot.user.display_name,
         icon_url = self.bot.user.display_avatar
       )
+      await member.timeout(
+        None,
+        reason = reason
+      )
       await response.send_message(
-        embed = err,
+        embed = embed,
         ephemeral = True
       )
-      return
-    expires = datetime.today() + duration
-    embed = discord.Embed(
-      description = f"Successfully timed out {member.mention}. The timeout will expire <t:{int(expires.timestamp())}:R>",
-      color = 0x39ff14
-    ).set_author(
-      name = self.bot.user.display_name,
-      icon_url = self.bot.user.display_avatar
-    )
-    await member.timeout(
-      duration,
-      reason = reason
-    )
-    await response.send_message(
-      embed = embed,
-      ephemeral = True
-    )
+    else:
+      if duration.days > 28:
+        err = discord.Embed(
+          description = "You can only timeout a member for 28 days maximum",
+          color = 0xff3131
+        ).set_author(
+          name = self.bot.user.display_name,
+          icon_url = self.bot.user.display_avatar
+        )
+        await response.send_message(
+          embed = err,
+          ephemeral = True
+        )
+        return
+      expires = datetime.today() + duration
+      embed = discord.Embed(
+        description = f"Successfully timed out {member.mention}. The timeout will expire <t:{int(expires.timestamp())}:R>",
+        color = 0x39ff14
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await member.timeout(
+        duration,
+        reason = reason
+      )
+      await response.send_message(
+        embed = embed,
+        ephemeral = True
+      )
 
   @moderateTimeout.error
   async def error(self, interaction : discord.Interaction, error):
@@ -848,6 +867,108 @@ class ModerateMember(commands.Cog):
     elif isinstance(error, app_commands.BotMissingPermissions):
       err = discord.Embed(
         description = "I do not have permission to ban a member",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+
+  @moderate.command(
+    name = "unban",
+    description = "Unban a member"
+  )
+  @app_commands.describe(
+    member = "Select a member to unban :",
+    reason = "Reason to unban the member"
+  )
+  @app_commands.checks.has_permissions(
+    ban_members = True
+  )
+  async def moderateUnban(self, interaction : discord.Interaction, member : discord.Member, reason : str = None):
+    response = interaction.response
+    user = interaction.user
+    guild = interaction.guild
+    if member == guild.owner:
+      err = discord.Embed(
+        description = "Unable to unban a **Guild Owner**",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    if member == self.bot.user:
+      err = discord.Embed(
+        descripition = "Unable to unban myself",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    if member not in [banned async for banned in guild.bans()]:
+      err = discord.Embed(
+        description = f"{member.mention} is not banned",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    embed = discord.Embed(
+      description = f"Successfully unbanned {member.mention}",
+      color = 0x39ff14
+    ).set_author(
+      name = self.bot.user.display_name,
+      icon_url = self.bot.user.display_avatar
+    )
+    if reason is not None:
+      embed.add_field(
+        name = "Reason :",
+        value = reason
+      )
+    await member.unban(reason = reason)
+    await response.send_message(
+      embed = embed,
+      ephemeral = True
+    )
+
+  @moderateUnban.error
+  async def error(self, interaction : discord.Interaction, error):
+    traceback.print_exc()
+    if isinstance(error, app_commands.MissingPermissions):
+      err = discord.Embed(
+        description = "You do not have permission to unban a member",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    elif isinstance(error, app_commands.BotMissingPermissions):
+      err = discord.Embed(
+        description = "I do not have permission to unban a member",
         color = 0xff3131
       ).set_author(
         name = self.bot.user.display_name,
