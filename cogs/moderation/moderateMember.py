@@ -444,6 +444,7 @@ class ModerateMember(commands.Cog):
     print("Loaded command : /moderate kick")
     print("Loaded command : /moderate ban")
     print("Loaded command : /moderate unban")
+    print("Loaded command : /moderate cleanup")
 
   moderate = app_commands.Group(
     name = "moderate",
@@ -969,6 +970,75 @@ class ModerateMember(commands.Cog):
     elif isinstance(error, app_commands.BotMissingPermissions):
       err = discord.Embed(
         description = "I do not have permission to unban a member",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+
+  @moderate.command(
+    name = "cleanup",
+    description = "Clean up the current channel"
+  )
+  @app_commands.describe(
+    limit = "amount of messages to delete",
+    member = "member's messages to delete",
+    reason = "reason to delete messages"
+  )
+  @app_commands.checks.has_permissions(
+    manage_messages = True
+  )
+  async def moderateCleanUp(self, interaction : discord.Interaction, limit : app_commands.Range[int, 1, 100], member : discord.Member = None, reason : str = None):
+    response = interaction.response
+    user = interaction.user
+    await response.defer(
+      ephemeral = True,
+      thinking = True
+    )
+    def messageCheck(message):
+      if member is None:
+        return True
+      return message.author == member
+    deleted = await interaction.channel.purge(
+      limit = limit,
+      check = messageCheck,
+      reason = reason
+    )
+    embed = discord.Embed(
+      description = f"Successfully deleted {len(deleted):,} messages in this channel",
+      color = 0x39ff14
+    ).set_author(
+      name = self.bot.user.display_name,
+      icon_url = self.bot.user.display_avatar
+    )
+    await interaction.followup.send(
+      embed = embed
+    )
+
+  @moderateCleanUp.error
+  async def error(self, interaction : discord.Interaction, error):
+    traceback.print_exc()
+    if isinstance(error, app_commands.MissingPermissions):
+      err = discord.Embed(
+        description = "You do not have permission to clean up the channel",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    if isinstance(error, app_commands.BotMissingPermissions):
+      err = discord.Embed(
+        description = "I do not have permission to clean up the channel",
         color = 0xff3131
       ).set_author(
         name = self.bot.user.display_name,
