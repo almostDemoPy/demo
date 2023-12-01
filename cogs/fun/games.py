@@ -7,6 +7,7 @@ import requests
 import traceback
 from discord import app_commands, ui
 from discord.ext import commands
+from random_word import RandomWords
 from stockfish import Stockfish
 
 class TextSelectSide(ui.View):
@@ -88,7 +89,7 @@ class TextSelectSide(ui.View):
             url = f"https://stockfish.online/api/stockfish.php",
             params = {
               "fen": fullfen,
-              "depth": 13,
+              "depth": 5,
               "mode": "bestmove"
             }
           )
@@ -1011,6 +1012,137 @@ class Chess(commands.Cog):
     )
 
   @playRps.error
+  async def error(self, interaction : discord.Interaction, error):
+    traceback.print_exc()
+
+  @play.command(
+    name = "wordle",
+    description = "Play a game of Wordle"
+  )
+  async def playWordle(self, interaction : discord.Interaction):
+    response = interaction.response
+    user = interaction.user
+    rw = RandomWords()
+    await response.defer(
+      thinking = True
+    )
+    word = None
+    while word is None:
+      prior = rw.get_random_word()
+      if len(str(prior)) > 5 or len(str(prior)) < 3:
+        continue
+      else:
+        word = prior
+    embed = discord.Embed(
+      description = f"Please reply with a {len(word)}-letter word below :",
+      color = 0x2b2d31
+    ).set_author(
+      name = user.display_name,
+      icon_url = user.display_avatar
+    )
+    resp = await interaction.followup.send(
+      embed = embed
+    )
+    view = ui.View()
+    currentRow = 0
+    guessed = False
+    while not guessed:
+      def messageCheck(message):
+        if message.reference is None or message.channel.id != resp.channel.id or message.author.id != user.id or len(message.content) != len(word):
+          return False
+        messageReference = resp.channel.get_partial_message(message.reference.message_id)
+        return messageReference == resp
+      guess = await self.bot.wait_for("message", check = messageCheck)
+      async def buttonCallback(interaction : discord.Interaction):
+        await interaction.response.defer()
+      if guess.content.lower() == word:
+        for char in word:
+          charButton = ui.Button(
+            label = char.upper(),
+            style = discord.ButtonStyle.green,
+            row = currentRow
+          )
+          charButton.callback = buttonCallback
+          view.add_item(charButton)
+        guessed = True
+        await resp.edit(
+          view = view
+        )
+        break
+      wordCharCounts = {}
+      for char in word:
+        wordCharCounts[char] = word.count(char)
+      for ind, char in enumerate(list(guess.content.lower())):
+        if char == word[ind]:
+          charButton = ui.Button(
+            label = char.upper(),
+            style = discord.ButtonStyle.green,
+            row = currentRow
+          )
+          wordCharCounts[char] -= 1
+        else:
+          if char in word:
+            if wordCharCounts[char] == 0:
+              charButton = ui.Button(
+                label = char.upper(),
+                style = discord.ButtonStyle.gray,
+                row = currentRow
+              )
+            else:
+              if word.count(char) == guess.content.lower().count(char):
+                charButton = ui.Button(
+                  label = char.upper(),
+                  style = discord.ButtonStyle.primary,
+                  row = currentRow
+                )
+              else:
+                if word[ind:].count(char) < guess.content.lower()[ind:].count(char):
+                  charButton = ui.Button(
+                    label = char.upper(),
+                    style = discord.ButtonStyle.primary,
+                    row = currentRow
+                  )
+                else:
+                  charButton = ui.Button(
+                    label = char.upper(),
+                    style = discord.ButtonStyle.gray,
+                    row = currentRow
+                  )
+          else:
+            charButton = ui.Button(
+              label = char.upper(),
+              style = discord.ButtonStyle.gray,
+              row = currentRow
+            )
+        charButton.callback = buttonCallback
+        view.add_item(charButton)
+      await resp.edit(
+        view = view
+      )
+      currentRow += 1
+      if currentRow == 5:
+        break
+    if guessed:
+      embed = discord.Embed(
+        description = "You guessed it right !",
+        color = 0x39ff14
+      ).set_author(
+        name = user.display_name,
+        icon_url = user.display_avatar
+      )
+    else:
+      embed = discord.Embed(
+        description = f"You guessed wrong ! The word was : ` {word} `",
+        color = 0xff3131
+      ).set_author(
+        name = user.display_name,
+        icon_url = user.display_avatar
+      )
+    await resp.edit(
+      embed = embed
+    )
+
+  @playWordle.error
   async def error(self, interaction : discord.Interaction, error):
     traceback.print_exc()
 
