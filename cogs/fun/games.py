@@ -1056,6 +1056,7 @@ class Chess(commands.Cog):
       guess = await self.bot.wait_for("message", check = messageCheck)
       async def buttonCallback(interaction : discord.Interaction):
         await interaction.response.defer()
+      await guess.delete()
       if guess.content.lower() == word:
         for char in word:
           charButton = ui.Button(
@@ -1090,42 +1091,96 @@ class Chess(commands.Cog):
                 row = currentRow
               )
             else:
-              if guess.content.lower()[0:(ind + 1 if ind == 0 else ind)].count(char) == word.count(char):
+              wordCharInds = []
+              guessCharInds = []
+              for ind2, char2 in enumerate(word):
+                if char2 == char:
+                  wordCharInds.append(ind2)
+              for ind3, char3 in enumerate(guess.content.lower()):
+                if char3 == char:
+                  guessCharInds.append(ind3)
+              for ind4 in guessCharInds:
+                if ind4 in wordCharInds:
+                  guessCharInds.remove(ind4)
+                  wordCharInds.remove(ind4)
+              if len(wordCharInds) == 0:
                 charButton = ui.Button(
                   label = char.upper(),
                   style = discord.ButtonStyle.gray,
                   row = currentRow
                 )
-              elif guess.content.lower()[0:(ind + 1 if ind == 0 else ind)].count(char) < word.count(char):
-                charButton = ui.Button(
-                  label = char.upper(),
-                  style = discord.ButtonStyle.primary,
-                  row = currentRow
-                )
               else:
-                charElseExistCount = 0
-                charElseMatchCount = 0
-                charElseExistBool = False
-                wordCharCount = word.count(char)
-                charInd = 0
-                for charCount in range(wordCharCount):
-                  charInd = word[charInd:len(word)].index(char)
-                  if guess.content.lower()[charInd] == char:
-                    charElseMatchCount += 1
-                  else:
-                    charElseExistCount += 1
-                if charElseExistCount == 0:
-                  charButton = ui.Button(
-                    label = char.upper(),
-                    style = discord.ButtonStyle.gray,
-                    row = currentRow
-                  )
-                else:
+                ind5 = guessCharInds.index(ind)
+                if ind5 == 0:
                   charButton = ui.Button(
                     label = char.upper(),
                     style = discord.ButtonStyle.primary,
                     row = currentRow
                   )
+                elif guessCharInds[ind5] == len(word):
+                  if word[0:ind].count(char) >= len(guessCharInds[0:ind5]):
+                    charButton = ui.Button(
+                      label = char.upper(),
+                      style = discord.ButtonStyle.primary,
+                      row = currentRow
+                    )
+                  else:
+                    charButton = ui.Button(
+                      label = char.upper(),
+                      style = discord.ButtonStyle.gray,
+                      row = currentRow
+                    )
+                else:
+                  guessCharInd2Left = guessCharInds[0:ind5]
+                  guessCharInd2Right = guessCharInds[ind5:len(guessCharInds)]
+                  if len(guessCharInd2Left) + 1 <= word.count(char):
+                    charButton = ui.Button(
+                      label = char.upper(),
+                      style = discord.ButtonStyle.primary,
+                      row = currentRow
+                    )
+                  else:
+                    charButton = ui.Button(
+                      label = char.upper(),
+                      style = discord.ButtonStyle.gray,
+                      row = currentRow
+                    )
+              # if guess.content.lower()[0:(ind + 1 if ind == 0 else ind)].count(char) == word.count(char):
+              #   charButton = ui.Button(
+              #     label = char.upper(),
+              #     style = discord.ButtonStyle.gray,
+              #     row = currentRow
+              #   )
+              # elif guess.content.lower()[0:(ind + 1 if ind == 0 else ind)].count(char) != 0 and guess.content.lower()[0:(ind + 1 if ind == 0 else ind)].count(char) < word.count(char):
+              #   charButton = ui.Button(
+              #     label = char.upper(),
+              #     style = discord.ButtonStyle.primary,
+              #     row = currentRow
+              #   )
+              # else:
+              #   charElseExistCount = 0
+              #   charElseMatchCount = 0
+              #   charElseExistBool = False
+              #   wordCharCount = word.count(char)
+              #   charInd = 0
+              #   for charCount in range(wordCharCount):
+              #     charInd = word[charInd:len(word)].index(char)
+              #     if guess.content.lower()[charInd] == char:
+              #       charElseMatchCount += 1
+              #     else:
+              #       charElseExistCount += 1
+              #   if charElseExistCount == 0:
+              #     charButton = ui.Button(
+              #       label = char.upper(),
+              #       style = discord.ButtonStyle.gray,
+              #       row = currentRow
+              #     )
+              #   else:
+              #     charButton = ui.Button(
+              #       label = char.upper(),
+              #       style = discord.ButtonStyle.primary,
+              #       row = currentRow
+              #     )
           else:
             charButton = ui.Button(
               label = char.upper(),
