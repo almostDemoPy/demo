@@ -667,6 +667,7 @@ class Chess(commands.Cog):
     self.bot = bot
     print("Loaded command : /play chess")
     print("Loaded command : /play rps")
+    print("Loaded command : /play wordle")
 
   play = app_commands.Group(name = "play", description = "Play commands")
 
