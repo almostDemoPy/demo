@@ -1145,42 +1145,6 @@ class Chess(commands.Cog):
                       style = discord.ButtonStyle.gray,
                       row = currentRow
                     )
-              # if guess.content.lower()[0:(ind + 1 if ind == 0 else ind)].count(char) == word.count(char):
-              #   charButton = ui.Button(
-              #     label = char.upper(),
-              #     style = discord.ButtonStyle.gray,
-              #     row = currentRow
-              #   )
-              # elif guess.content.lower()[0:(ind + 1 if ind == 0 else ind)].count(char) != 0 and guess.content.lower()[0:(ind + 1 if ind == 0 else ind)].count(char) < word.count(char):
-              #   charButton = ui.Button(
-              #     label = char.upper(),
-              #     style = discord.ButtonStyle.primary,
-              #     row = currentRow
-              #   )
-              # else:
-              #   charElseExistCount = 0
-              #   charElseMatchCount = 0
-              #   charElseExistBool = False
-              #   wordCharCount = word.count(char)
-              #   charInd = 0
-              #   for charCount in range(wordCharCount):
-              #     charInd = word[charInd:len(word)].index(char)
-              #     if guess.content.lower()[charInd] == char:
-              #       charElseMatchCount += 1
-              #     else:
-              #       charElseExistCount += 1
-              #   if charElseExistCount == 0:
-              #     charButton = ui.Button(
-              #       label = char.upper(),
-              #       style = discord.ButtonStyle.gray,
-              #       row = currentRow
-              #     )
-              #   else:
-              #     charButton = ui.Button(
-              #       label = char.upper(),
-              #       style = discord.ButtonStyle.primary,
-              #       row = currentRow
-              #     )
           else:
             charButton = ui.Button(
               label = char.upper(),
