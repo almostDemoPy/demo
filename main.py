@@ -14,7 +14,7 @@ bot = commands.Bot(
   activity = discord.Activity(
     type = discord.ActivityType.custom,
     name = " ",
-    state = "Version 3.9"
+    state = "Version 4.0"
   )
 )
 
