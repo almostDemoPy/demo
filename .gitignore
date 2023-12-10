@@ -1,5 +1,4 @@
 .env
-.gitignore
 cogs/admin/__pycache__/
 cogs/events/__pycache__/
 cogs/info/__pycache__/
@@ -9,3 +8,4 @@ cogs/fun/__pycache__/
 json/
 cogs/moderation/__pycache__/
 run.bat
+.gitignore
