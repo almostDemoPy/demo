@@ -662,7 +662,7 @@ class RPSGame(ui.View):
   async def on_error(self, interaction : discord.Interaction, error):
     traceback.print_exc()
 
-class Chess(commands.Cog):
+class Games(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
     print("Loaded command : /play chess")
@@ -1184,4 +1184,4 @@ class Chess(commands.Cog):
     traceback.print_exc()
 
 async def setup(bot):
-  await bot.add_cog(Chess(bot))
+  await bot.add_cog(Games(bot))
