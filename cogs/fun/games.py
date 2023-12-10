@@ -65,6 +65,7 @@ class TextSelectSide(ui.View):
           del games["chess"][str(self.member.id)]
           with open('json/games.json', 'w') as f:
             json.dump(games, f, indent = 2)
+          await self.boardThread.delete()
           break
         currentTurn = "white" if self.board.turn == chess.WHITE else "black"
         if self.member == self.bot.user and players[str(self.member.id)] == currentTurn:
