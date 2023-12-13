@@ -219,7 +219,9 @@ class UserInfoSelectMenu(ui.Select):
             url = f"discord://-/users/{user.id}"
           )
         )
-        await interaction.response.edit_message(
+        view.add_item(self)
+        await interaction.followup.edit_message(
+          interaction.message.id,
           embeds = embeds,
           view = view
         )
@@ -234,7 +236,9 @@ class UserInfoSelectMenu(ui.Select):
             url = f"discord://-/users/{user.id}"
           )
         )
-        await response.edit_message(
+        view.add_item(self)
+        await interaction.followup.edit_message(
+          interaction.message.id,
           embeds = embeds,
           view = view
         )
@@ -258,8 +262,11 @@ class UserInfoSelectMenu(ui.Select):
       ).set_image(
         url = avatarUrl
       )
-      await response.edit_message(
-        embed = embed
+      view = ui.View().add_item(self)
+      await interaction.followup.edit_message(
+        interaction.message.id,
+        embed = embed,
+        view = view
       )
     except:
       traceback.print_exc()
@@ -267,6 +274,7 @@ class UserInfoSelectMenu(ui.Select):
   async def callback(self, interaction : discord.Interaction):
     response = interaction.response
     user = interaction.user
+    await response.defer()
     member = self.member
     if user != self.user:
       err = discord.Embed(
