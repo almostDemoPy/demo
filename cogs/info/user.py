@@ -220,8 +220,7 @@ class UserInfoSelectMenu(ui.Select):
           )
         )
         view.add_item(self)
-        await interaction.followup.edit_message(
-          interaction.message.id,
+        await interaction.message.edit(
           embeds = embeds,
           view = view
         )
@@ -237,8 +236,7 @@ class UserInfoSelectMenu(ui.Select):
           )
         )
         view.add_item(self)
-        await interaction.followup.edit_message(
-          interaction.message.id,
+        await interaction.message.edit(
           embeds = embeds,
           view = view
         )
@@ -263,8 +261,7 @@ class UserInfoSelectMenu(ui.Select):
         url = avatarUrl
       )
       view = ui.View().add_item(self)
-      await interaction.followup.edit_message(
-        interaction.message.id,
+      await interaction.message.edit(
         embed = embed,
         view = view
       )
