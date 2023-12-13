@@ -7,7 +7,7 @@ from discord.ext import commands
 class HeadsOrTails(commands.GroupCog, name = "heads", description = "Heads or Tails command"):
   def __init__(self, bot):
     self.bot = bot
-    print("Loaded command : /heads or tails")
+    print("Loaded command\t\t: /heads or tails")
 
   Or = app_commands.Group(
     name = "or",

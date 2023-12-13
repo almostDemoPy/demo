@@ -8,8 +8,8 @@ from discord.ext import commands
 class Thesaurus(commands.GroupCog, name = "thesaurus", description = "Thesaurus commands"):
   def __init__(self, bot):
     self.bot = bot
-    print("Loaded command : /thesaurus synonym")
-    print("Loaded command : /thesaurus antonym")
+    print("Loaded command\t\t: /thesaurus synonym")
+    print("Loaded command\t\t: /thesaurus antonym")
 
   @app_commands.command(
     name = "synonym",

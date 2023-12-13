@@ -439,12 +439,12 @@ class ModerateMember(commands.Cog):
     self.bot.tree.add_command(
       self.moderateContextMenu
     )
-    print("Loaded context menu : moderate")
-    print("Loaded command : /moderate timeout")
-    print("Loaded command : /moderate kick")
-    print("Loaded command : /moderate ban")
-    print("Loaded command : /moderate unban")
-    print("Loaded command : /moderate cleanup")
+    print("Loaded context menu\t: moderate")
+    print("Loaded command\t\t: /moderate timeout")
+    print("Loaded command\t\t: /moderate kick")
+    print("Loaded command\t\t: /moderate ban")
+    print("Loaded command\t\t: /moderate unban")
+    print("Loaded command\t\t: /moderate cleanup")
 
   moderate = app_commands.Group(
     name = "moderate",

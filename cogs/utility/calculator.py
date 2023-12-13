@@ -565,7 +565,7 @@ class CalculatorView(ui.View):
 class Calculator(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
-    print("Loaded command : /calculator")
+    print("Loaded command\t\t: /calculator")
 
   @app_commands.command(
     name = "calculator",

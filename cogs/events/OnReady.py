@@ -6,7 +6,7 @@ class OnReady(commands.Cog):
   def __init___(self, bot):
     self.bot = bot
     print(
-      "Loaded event : on_ready()"
+      "Loaded event\t\t: on_ready()"
     )
 
   @commands.Cog.listener()

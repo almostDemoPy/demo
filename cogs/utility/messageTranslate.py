@@ -13,9 +13,9 @@ class MessageTranslate(commands.Cog):
         callback = self.messageTranslate
       )
     )
-    print("Loaded context menu : Translate")
-    print("Loaded command : /translate")
-    print("Loaded command : demo.translate")
+    print("Loaded context menu\t: Translate")
+    print("Loaded command\t\t: /translate")
+    print("Loaded command\t\t: demo.translate")
 
   async def messageTranslate(self, interaction : discord.Interaction, message : discord.Message):
     try:

@@ -666,9 +666,9 @@ class RPSGame(ui.View):
 class Games(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
-    print("Loaded command : /play chess")
-    print("Loaded command : /play rps")
-    print("Loaded command : /play wordle")
+    print("Loaded command\t\t: /play chess")
+    print("Loaded command\t\t: /play rps")
+    print("Loaded command\t\t: /play wordle")
 
   play = app_commands.Group(name = "play", description = "Play commands")
 

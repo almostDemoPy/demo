@@ -8,7 +8,7 @@ class Demo(commands.GroupCog, name = "demo", description = "demo commands"):
   def __init__(self, bot):
     self.bot = bot
     self.startup = datetime.now()
-    print("Loaded command : /demo info")
+    print("Loaded command\t\t: /demo info")
 
   @app_commands.command(
     name = "info",

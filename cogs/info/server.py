@@ -6,7 +6,7 @@ from discord.ext import commands
 class Server(commands.GroupCog, name = "server", description = "Server commands"):
   def __init__(self, bot):
     self.bot = bot
-    print("Loaded command : /server info")
+    print("Loaded command\t\t: /server info")
 
   @app_commands.command(
     name = "info",

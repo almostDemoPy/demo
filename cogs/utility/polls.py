@@ -164,7 +164,7 @@ class PollModal(ui.Modal):
 class Polls(commands.GroupCog, name = "poll", description = "Poll commands"):
   def __init__(self, bot):
     self.bot = bot
-    print("Loaded command group : poll")
+    print("Loaded command group\t: poll")
 
   @app_commands.command(
     name = "create",

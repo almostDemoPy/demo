@@ -299,9 +299,9 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
     )
     with open('json/emojis.json', 'r') as f:
       self.emojis = json.load(f)
-    print("Loaded command group : user")
-    print("Loaded command : /user profile")
-    print("Loaded context menu : User Profile")
+    print("Loaded command group\t: user")
+    print("Loaded command\t\t: /user profile")
+    print("Loaded context menu\t: User Profile")
 
   async def user_info(self, interaction : discord.Interaction, member : discord.Member):
     try:
