@@ -132,6 +132,7 @@ class Dictionary(commands.GroupCog, name = "dictionary", description = "dictiona
     self.bot = bot
     self.dictionary = PyDictionary()
     print("Loaded command : /dictionary define")
+    print("Loaded command : /dictionary synonym")
 
   @app_commands.command(
     name = "define",
