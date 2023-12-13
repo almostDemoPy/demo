@@ -1,9 +1,7 @@
 import discord
-import nltk
 import traceback
 from discord import app_commands, ui
 from discord.ext import commands
-from nltk.corpus import wordnet
 from PyDictionary import PyDictionary
 
 class DictionaryDefineViewSelect(ui.Select):

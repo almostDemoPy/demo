@@ -2,6 +2,7 @@ import discord
 import nltk
 import traceback
 from discord import app_commands, ui
+from nltk.corpus import wordnet
 from discord.ext import commands
 
 class Thesaurus(commands.GroupCog, name = "thesaurus", description = "Thesaurus commands"):
