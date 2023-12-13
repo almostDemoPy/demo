@@ -42,11 +42,11 @@ class Demo(commands.GroupCog, name = "demo", description = "demo commands"):
       inline = True
     ).add_field(
       name = "Guild Count :",
-      value = f"> {len(self.bot.guilds):,}",
+      value = f"> ` {len(self.bot.guilds):,} `",
       inline = True
     ).add_field(
       name = "User Count :",
-      value = f"> {len(self.bot.users):,}",
+      value = f"> ` {len(self.bot.users):,} `",
       inline = True
     ).add_field(
       name = "Online Since :",
