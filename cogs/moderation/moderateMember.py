@@ -809,7 +809,7 @@ class ModerateMember(commands.Cog):
         ephemeral = True
       )
       return
-    elif isinstance(error, app_commands.MissingPermissions):
+    elif isinstance(error, app_commands.BotMissingPermissions):
       err = discord.Embed(
         description = "I do not have permission to kick a member",
         color = 0xff3131
