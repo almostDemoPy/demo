@@ -322,6 +322,12 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
           botOwner = owner.mention
         else:
           botOwner = "` demoutrei `"
+        user2 = guild.me
+        currentVersion = ""
+        for activity in user2.activities:
+          if isinstance(activity, discord.CustomActivity):
+            currentVersion = activity.state.split()[1]
+            break
         embed = discord.Embed(
           title = self.bot.user.display_name,
           description = f"""
@@ -334,6 +340,10 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
           color = 0x2b2d31
         ).set_thumbnail(
           url = self.bot.user.display_avatar
+        ).add_field(
+          name = "Current Version :",
+          value = f"> ` {currentVersion} `",
+          inline = True
         ).add_field(
           name = "Command Prefix :",
           value = "> ` demo.<command_name> `",
