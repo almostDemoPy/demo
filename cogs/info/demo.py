@@ -9,6 +9,8 @@ class Demo(commands.GroupCog, name = "demo", description = "demo commands"):
     self.bot = bot
     self.startup = datetime.now()
     print("Loaded command\t\t: /demo info")
+    print("Loaded command\t\t: /demo support")
+    print("Loaded command\t\t: /demo invite")
 
   @app_commands.command(
     name = "info",
@@ -24,6 +26,12 @@ class Demo(commands.GroupCog, name = "demo", description = "demo commands"):
       botOwner = owner.mention
     else:
       botOwner = "` demoutrei `"
+    currentVersion = ""
+    user2 = guild.me
+    for activity in user2.activities:
+      if isinstance(activity, discord.CustomActivity):
+        currentVersion = activity.state.split()[1]
+        break
     embed = discord.Embed(
       title = self.bot.user.display_name,
       description = f"""
@@ -36,6 +44,10 @@ class Demo(commands.GroupCog, name = "demo", description = "demo commands"):
       color = 0x2b2d31
     ).set_thumbnail(
       url = self.bot.user.display_avatar
+    ).add_field(
+      name = "Current Version :",
+      value = f"> ` {currentVersion} `",
+      inline = True
     ).add_field(
       name = "Command Prefix :",
       value = "> ` demo.<command_name> `",
@@ -64,7 +76,79 @@ class Demo(commands.GroupCog, name = "demo", description = "demo commands"):
       view = view
     )
 
+  @app_commands.command(
+    name = "support",
+    description = "Join Demo's support server"
+  )
+  async def demoSupport(self, interaction : discord.Interaction):
+    response = interaction.response
+    user = interaction.response
+    supportGuildID = 1171782661761671168
+    guild = self.bot.get_guild(supportGuildID)
+    description = ""
+    if guild.description is not None:
+      description = f"\n\n> {guild.description}"
+    embed = discord.Embed(
+      title = guild.name,
+      description = f"""
+      Join {self.bot.user.mention}'s support guild for news, updates, reports, suggestions and / or feedbacks ! See you there !{description}
+      """,
+      color = 0x2b2d31
+    ).add_field(
+      name = "Member Count :",
+      value = f"> {len(guild.members):,}",
+      inline = True
+    )
+    if guild.icon is not None:
+      embed.set_thumbnail(
+        url = guild.icon.url
+      )
+    if guild.banner is not None:
+      embed.set_image(
+        url = guild.banner.url
+      )
+    view = ui.View().add_item(
+      ui.Button(
+        label = "Support Server",
+        url = "https://discord.gg/mXSXzc4SJB"
+      )
+    )
+    await response.send_message(
+      embed = embed,
+      view = view,
+      ephemeral = True
+    )
+
+  @app_commands.command(
+    name = "invite",
+    description = "Invite Demo to your server"
+  )
+  async def demoInvite(self, interaction : discord.Interaction):
+    response = interaction.response
+    user = interaction.user
+    invite = "https://discord.com/api/oauth2/authorize?client_id=1169799947021975633&permissions=1632222178374&scope=bot+applications.commands"
+    embed = discord.Embed(
+      title = self.bot.user.display_name,
+      description = f"Want to try {self.bot.user.mention} in your server ? Invite him now !",
+      color = 0x2b2d31
+    ).set_thumbnail(
+      url = self.bot.user.display_avatar
+    )
+    view = ui.View().add_item(
+      ui.Button(
+        label = "Invite",
+        url = invite
+      )
+    )
+    await response.send_message(
+      embed = embed,
+      view = view,
+      ephemeral = True
+    )
+
   @demoInfo.error
+  @demoSupport.error
+  @demoInvite.error
   async def error(self, interaction : discord.Interaction, error):
     traceback.print_exc()
 
