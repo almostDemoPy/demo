@@ -748,31 +748,32 @@ class ModerateMember(commands.Cog):
       thinking = True,
       ephemeral = True
     )
-    userRoles = user.roles.reverse()
-    memberRoles = member.roles.reverse()
-    userKickRole = None
-    memberKickRole = None
-    for role in userRoles:
-      if role.permissions.kick_members or role.permissions.administrator:
-        userKickRole = role
-        break
-    for role in memberRoles:
-      if role.permissions.kick_members or role.permissions.administrator:
-        memberKickRole = role
-        break
-    if userKickRole is not None and memberKickRole is not None:
-      if memberKickRole >= userKickRole:
-        err = discord.Embed(
-          description = "You cannot kick someone higher than or as equal as you",
-          color = 0xff3131
-        ).set_author(
-          name = self.bot.user.display_name,
-          icon_url = self.bot.user.display_avatar
-        )
-        await interaction.followup.send(
-          embed = err
-        )
-        return
+    if user != interaction.guild.owner:
+      userRoles = user.roles.reverse()
+      memberRoles = member.roles.reverse()
+      userKickRole = None
+      memberKickRole = None
+      for role in userRoles:
+        if role.permissions.kick_members or role.permissions.administrator:
+          userKickRole = role
+          break
+      for role in memberRoles:
+        if role.permissions.kick_members or role.permissions.administrator:
+          memberKickRole = role
+          break
+      if userKickRole is not None and memberKickRole is not None:
+        if memberKickRole >= userKickRole:
+          err = discord.Embed(
+            description = "You cannot kick someone higher than or as equal as you",
+            color = 0xff3131
+          ).set_author(
+            name = self.bot.user.display_name,
+            icon_url = self.bot.user.display_avatar
+          )
+          await interaction.followup.send(
+            embed = err
+          )
+          return
     embed = discord.Embed(
       description = f"Successfully kicked {member.mention}",
       color = 0x39ff14
@@ -866,31 +867,32 @@ class ModerateMember(commands.Cog):
       thinking = True,
       ephemeral = True
     )
-    userRoles = user.roles.reverse()
-    memberRoles = member.roles.reverse()
-    userBanRole = None
-    memberBanRole = None
-    for role in userRoles:
-      if role.permissions.ban_members or role.permissions.administrator:
-        userBanRole = role
-        break
-    for role in memberRoles:
-      if role.permissions.ban_members or role.permissions.administrator:
-        memberBanRole = role
-        break
-    if userBanRole is not None and memberBanRole is not None:
-      if memberBanRole >= userBanRole:
-        err = discord.Embed(
-          description = "You cannot ban someone higher than or as equal as you",
-          color = 0xff3131
-        ).set_author(
-          name = self.bot.user.display_name,
-          icon_url = self.bot.user.display_avatar
-        )
-        await interaction.followup.send(
-          embed = err
-        )
-        return
+    if user != interaction.guild.owner:
+      userRoles = user.roles.reverse()
+      memberRoles = member.roles.reverse()
+      userBanRole = None
+      memberBanRole = None
+      for role in userRoles:
+        if role.permissions.ban_members or role.permissions.administrator:
+          userBanRole = role
+          break
+      for role in memberRoles:
+        if role.permissions.ban_members or role.permissions.administrator:
+          memberBanRole = role
+          break
+      if userBanRole is not None and memberBanRole is not None:
+        if memberBanRole >= userBanRole:
+          err = discord.Embed(
+            description = "You cannot ban someone higher than or as equal as you",
+            color = 0xff3131
+          ).set_author(
+            name = self.bot.user.display_name,
+            icon_url = self.bot.user.display_avatar
+          )
+          await interaction.followup.send(
+            embed = err
+          )
+          return
     embed = discord.Embed(
       description = f"Successfully banned {member.mention}",
       color = 0x39ff14
