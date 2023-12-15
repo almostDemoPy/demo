@@ -92,6 +92,7 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
     print("Loaded command\t\t: /guild emoji add")
     print("Loaded command\t\t: /guild emoji remove")
     print("Loaded command\t\t: /guild emoji info")
+    print("Loaded command\t\t: /guild edit name")
 
   emoji = app_commands.Group(
     name = "emoji",
@@ -277,23 +278,35 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
         ephemeral = True
       )
 
-  @app_commands.command(
+  edit = app_commands.Group(
     name = "edit",
-    description = "Edit the current guild"
+    description = "guild edit commands"
+  )
+
+  @edit.command(
+    name = "name",
+    description = "Change the current guild's name"
   )
   @app_commands.describe(
-    name = "New name of the guild"
+    name = "New guild name :"
   )
   @app_commands.checks.cooldown(
     1, 300
   )
-  async def guildEdit(self, interaction : discord.Interaction, name : str = None):
+  @app_commands.default_permissions(
+    administrator = True
+  )
+  async def guildEditName(
+    self,
+    interaction : discord.Interaction,
+    name : app_commands.Range[str, 2, 100]
+  ):
     response = interaction.response
     user = interaction.user
     guild = interaction.guild
-    if user != guild.owner:
+    if user != interaction.guild.owner:
       err = discord.Embed(
-        description = "You do not have permission to modify this guild",
+        description = "Only the Guild Owner can execute this command",
         color = 0xff3131
       ).set_author(
         name = self.bot.user.display_name,
@@ -304,29 +317,32 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
         ephemeral = True
       )
       return
-    if name is None:
-      name = guild.name
-    embed = discord.Embed(
-      description = f"""
-      Successfully edited the following :
-      """,
-      color = 0x2b2d31
-    ).set_author(
-      name = self.bot.user.display_name,
-      icon_url = self.bot.user.display_avatar
+    await response.defer(
+      thinking = True,
+      ephemeral = True
     )
-    if name is not None:
-      embed.add_field(
-        name = "Name :",
-        value = f"> ` {name} `",
-        inline = True
-      )
+    followup = interaction.followup
+    before = guild.name
     await guild.edit(
       name = name
     )
-    await response.send_message(
-      embed = embed,
-      ephemeral = True
+    embed = discord.Embed(
+      description = "Successfully edited the guild property : ` name `",
+      color = 0x39ff14
+    ).set_author(
+      name = self.bot.user.display_name,
+      icon_url = self.bot.user.display_avatar
+    ).add_field(
+      name = "Old :",
+      value = f"> {before}",
+      inline = True
+    ).add_field(
+      name = "New :",
+      value = f"> {name}",
+      inline = True
+    )
+    await followup.send(
+      embed = embed
     )
 
   @guildEmojiAdd.error
@@ -352,7 +368,7 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
   async def error(self, interaction : discord.Interaction, error):
     traceback.print_exc()
   
-  @guildEdit.error
+  @guildEditName.error
   async def error(self, interaction : discord.Interaction, error):
     response = interaction.response
     traceback.print_exc()
