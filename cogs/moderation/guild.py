@@ -52,6 +52,40 @@ class GuildEmojiInfoSelect(ui.Select):
   async def on_error(self, interaction : discord.Interaction, error):
     traceback.print_exc()
 
+class GuildEmojiRemoveSelect(ui.Select):
+  def __init__(self, emojis):
+    super().__init__(
+      placeholder = "Select an emoji :",
+      options = [
+        discord.SelectOption(
+          label = emoji.name,
+          value = emoji.id,
+          emoji = emoji
+        )
+        for emoji in emojis
+      ],
+      min_values = 1,
+      max_values = 1
+    )
+
+  async def callback(self, interaction : discord.Interaction):
+    response = interaction.response
+    user = interaction.user
+    guild = interaction.guild
+    emoji = guild.get_emoji(self.values[0])
+    await emoji.delete()
+    embed = discord.Embed(
+      description = f"Successfully deleted emoji with name : ` {emoji.name} `",
+      color = 0x39ff14
+    )
+    await response.edit_message(
+      embed = embed,
+      view = None
+    )
+
+  async def on_error(self, interaction : discord.Interaction, error):
+    traceback.print_exc()
+
 class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
   def __init__(self, bot):
     self.bot = bot
@@ -89,16 +123,21 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
         ephemeral = True
       )
       return
+    await response.defer(
+      thinking = True,
+      ephemeral = True
+    )
+    emojiBytes = await image.read()
     newEmoji = await guild.create_custom_emoji(
       name = name,
-      image = image
+      image = emojiBytes
     )
     embed = discord.Embed(
-      description = f"Successfully created a new emoji : {newEmoji.name} {newEmoji}"
+      description = f"Successfully created a new emoji : {newEmoji.name} {newEmoji}",
+      color = 0x39ff14
     )
-    await response.send_message(
-      embed = embed,
-      ephemeral = True
+    await interaction.followup.send(
+      embed = embed
     )
 
   @emoji.command(
@@ -106,10 +145,67 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
     description = "Remove an emoji from this guild"
   )
   @app_commands.describe(
-    emoji = "Emoji to remove"
+    name = "Name of emoji to remove"
   )
-  async def guildEmojiRemove(self, interaction : discord.Interaction, emoji : str):
-    pass
+  async def guildEmojiRemove(self, interaction : discord.Interaction, name : str):
+    response = interaction.response
+    user = interaction.user
+    guild = interaction.guild
+    if user != guild.owner:
+      err = discord.Embed(
+        description = "Only the Guild Owner can execute this slash command",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    selectedEmojiList = [emoji for emoji in guild.emojis if emoji.name == name]
+    if not selectedEmojiList:
+      err = discord.Embed(
+        description = f"There is no emoji in this guild with name ` {name} `",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    if len(selectedEmojiList) == 1:
+      await guild.delete_emoji(selectedEmojiList[0])
+      embed = discord.Embed(
+        description = f"Successfully deleted emoji with name : ` {name} `",
+        color = 0x39ff14
+      )
+      await response.send_message(
+        embed = embed,
+        ephemeral = True
+      )
+    else:
+      if len(selectedEmojiList) > 25:
+        selectedEmojiList = selectedEmojiList[:25]
+      view = ui.View().add_item(
+        GuildEmojiRemoveSelect(selectedEmojiList)
+      )
+      embed = discord.Embed(
+        description = "Select an emoji below :",
+        color = 0x2b2d31
+      ).set_author(
+        name = user.display_name,
+        icon_url = user.display_avatar
+      )
+      await response.send_message(
+        embed = embed,
+        view = view,
+        ephemeral = True
+      )
 
   @emoji.command(
     name = "info",
