@@ -1,8 +1,6 @@
 # demo
 A modernized Discord bot for your liking
 
----
-
 ### Features
 1. Dictionary
 2. Thesaurus ( Antonyms and Synonyms )
@@ -26,8 +24,5 @@ A modernized Discord bot for your liking
  12.2 member ban and unban
  12.3 member timeout
  12.4 member kick
-
----
-
 ### Contact
 - [Discord Support Server](https://discord.gg/mXSXzc4SJB)
