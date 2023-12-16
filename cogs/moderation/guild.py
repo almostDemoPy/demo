@@ -86,6 +86,66 @@ class GuildEmojiRemoveSelect(ui.Select):
   async def on_error(self, interaction : discord.Interaction, error):
     traceback.print_exc()
 
+class GuildEditDescriptionModal(ui.Modal):
+  def __init__(self, guild : discord.Guild, bot):
+    super().__init__(
+      title = "Guild Edit Description"
+    )
+    self.guild = guild
+    self.bot = bot
+    if guild.description is None:
+      self.defaultDescription = ""
+    else:
+      self.defaultDescription = guild.description
+    self.descriptionField = ui.TextInput(
+      label = "Guild Description :",
+      default = self.defaultDescription,
+      max_length = 120,
+      min_length = 0,
+      required = False,
+      placeholder = "Leave empty to remove the description",
+      style = discord.TextStyle.long
+    )
+    self.add_item(self.descriptionField)
+
+  async def on_submit(self, interaction : discord.Interaction):
+    response = interaction.response
+    user = interaction.user
+    guild = interaction.guild
+    newDescription = str(self.descriptionField)
+    if newDescription == "":
+      newDescription = None
+    await response.defer(
+      ephemeral = True,
+      thinking = True
+    )
+    followup = interaction.followup
+    oldDescription = guild.description
+    embed = discord.Embed(
+      description = f"Successfully edited the guild property : ` description `",
+      color = 0x39ff14
+    ).set_author(
+      name = self.bot.user.display_name,
+      icon_url = self.bot.user.display_avatar
+    ).add_field(
+      name = "Old :",
+      value = f">>> {guild.description}",
+      inline = False
+    ).add_field(
+      name = "New :",
+      value = f">>> {newDescription}",
+      inline = False
+    )
+    await guild.edit(
+      description = newDescription
+    )
+    await followup.send(
+      embed = embed
+    )
+
+  async def on_error(self, interaction : discord.Interaction, error):
+    traceback.print_exc()
+
 class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
   def __init__(self, bot):
     self.bot = bot
@@ -93,6 +153,7 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
     print("Loaded command\t\t: /guild emoji remove")
     print("Loaded command\t\t: /guild emoji info")
     print("Loaded command\t\t: /guild edit name")
+    print("Loaded command\t\t: /guild edit description")
 
   emoji = app_commands.Group(
     name = "emoji",
@@ -114,6 +175,19 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
     if user != guild.owner:
       err = discord.Embed(
         description = "Only the Guild Owner can execute this slash command",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    if len(guild.emojis) == guild.emoji_limit:
+      err = discord.Embed(
+        description = "This server does not have any empty emoji slots left",
         color = 0xff3131
       ).set_author(
         name = self.bot.user.display_name,
@@ -345,6 +419,49 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
       embed = embed
     )
 
+  @edit.command(
+    name = "description",
+    description = "Change the current guild's description"
+  )
+  @app_commands.default_permissions(
+    administrator = True
+  )
+  async def guildEditDescription(
+    self,
+    interaction : discord.Interaction
+  ):
+    response = interaction.response
+    user = interaction.user
+    guild = interaction.guild
+    if user != interaction.guild.owner:
+      err = discord.Embed(
+        description = "Only the Guild Owner can execute this command",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    if "COMMUNITY" not in guild.features:
+      err = discord.Embed(
+        description = "` Community ` is not enabled in this server",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await followup.send(
+        embed = err
+      )
+      return
+    await response.send_modal(
+      GuildEditDescriptionModal(guild, self.bot)
+    )
+
   @guildEmojiAdd.error
   @guildEmojiRemove.error
   async def error(self, interaction : discord.Interaction, error):
@@ -369,6 +486,7 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
     traceback.print_exc()
   
   @guildEditName.error
+  @guildEditDescription.error
   async def error(self, interaction : discord.Interaction, error):
     response = interaction.response
     traceback.print_exc()
