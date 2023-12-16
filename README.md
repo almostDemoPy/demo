@@ -3,6 +3,11 @@ A modernized Discord bot for your liking
 
 ---
 
+### Bot Invite
+Invite [Demo](https://discord.com/api/oauth2/authorize?client_id=1169799947021975633&permissions=1632222178374&scope=bot+applications.commands) to your server to experience its greatness and all !
+
+---
+
 ### Features
 1. Dictionary
 2. Thesaurus ( Antonyms and Synonyms )
@@ -14,20 +19,11 @@ A modernized Discord bot for your liking
 8. Polls
 9. Rock Paper Scissors
 10. Guild commands
-10.1 editing of name property
-10.2 addition and removal of emojis
 11. Informative commands
-11.1 emoji
-11.2 user profile
-11.3 user avatar
-11.4 guild info
 12. Moderation commands
-12.1 channel cleanup
-12.2 member ban and unban
-12.3 member timeout
-12.4 member kick
 
 ---
 
 ### Contact
 - [Discord Support Server](https://discord.gg/mXSXzc4SJB)
+- ` demoutrei ` ( developer )
