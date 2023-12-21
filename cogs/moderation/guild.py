@@ -154,6 +154,7 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
     print("Loaded command\t\t: /guild emoji info")
     print("Loaded command\t\t: /guild edit name")
     print("Loaded command\t\t: /guild edit description")
+    print("Loaded command\t\t: /guild edit icon")
 
   emoji = app_commands.Group(
     name = "emoji",
@@ -462,6 +463,90 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
       GuildEditDescriptionModal(guild, self.bot)
     )
 
+  @edit.command(
+    name = "icon",
+    description = "Change the current guild's icon"
+  )
+  @app_commands.describe(
+    image = "New icon :"
+  )
+  @app_commands.default_permissions(
+    administrator = True
+  )
+  @app_commands.checks.cooldown(
+    1, 300
+  )
+  async def guildEditIcon(
+    self,
+    interaction : discord.Interaction,
+    image : discord.Attachment = None
+  ):
+    response = interaction.response
+    user = interaction.user
+    guild = interaction.guild
+    if user != interaction.guild.owner:
+      err = discord.Embed(
+        description = "Only the Guild Owner can execute this command",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    if image is not None:
+      if not (image.filename.endswith(".png") or image.filename.endswith(".jpeg") or image.filename.endswith(".gif")):
+        err = discord.Embed(
+          description = "only ` .PNG `, ` .JPEG `, or ` .GIF ` is supported",
+          color = 0xff3131
+        ).set_author(
+          name = self.bot.user.display_name,
+          icon_url = self.bot.user.display_avatar
+        )
+        await response.send_message(
+          embed = err,
+          ephemeral = True
+        )
+        return
+      if image.filename.endswith(".png") or image.filename.endswith(".jpeg"):
+        image = await image.read()
+      else:
+        if "ANIMATED_ICON" not in guild.features:
+          err = discord.Embed(
+            description = "This server does not support animated icons yet",
+            color = 0xff3131
+          ).set_author(
+            name = self.bot.user.display_name,
+            icon_url = self.bot.user.display_avatar
+          )
+          await response.send_message(
+            embed = err,
+            ephemeral = True
+          )
+          return
+        image = await image.read()
+    await response.defer(
+      ephemeral = True,
+      thinking = True
+    )
+    followup = interaction.followup
+    await guild.edit(
+      icon = image
+    )
+    embed = discord.Embed(
+      description = "Successfully changed guild property : ` icon `",
+      color = 0x39ff14
+    ).set_author(
+      name = self.bot.user.display_name,
+      icon_url = self.bot.user.display_avatar
+    )
+    await followup.send(
+      embed = embed
+    )
+
   @guildEmojiAdd.error
   @guildEmojiRemove.error
   async def error(self, interaction : discord.Interaction, error):
@@ -487,6 +572,7 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
   
   @guildEditName.error
   @guildEditDescription.error
+  @guildEditIcon.error
   async def error(self, interaction : discord.Interaction, error):
     response = interaction.response
     traceback.print_exc()
