@@ -18,9 +18,10 @@ Invite [Demo](https://discord.com/api/oauth2/authorize?client_id=116979994702197
 7. Text Translations
 8. Polls
 9. Rock Paper Scissors
-10. Guild commands
-11. Informative commands
-12. Moderation commands
+10. Ring the Bell
+11. Guild commands
+12. Informative commands
+13. Moderation commands
 
 ---
 
