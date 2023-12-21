@@ -10,3 +10,4 @@ cogs/moderation/__pycache__/
 run.bat
 .gitignore
 db.py
+__pycache__
