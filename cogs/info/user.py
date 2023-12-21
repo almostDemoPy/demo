@@ -312,9 +312,58 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
 
   async def user_info(self, interaction : discord.Interaction, member : discord.Member):
     try:
+      emojis = self.emojis
       response = interaction.response
       user = interaction.user
+      guild = interaction.guild
       if member == self.bot.user:
+        user = guild.get_member(member.id)
+        desktopStatus = ""
+        if user.desktop_status != discord.Status.offline:
+          if user.desktop_status == discord.Status.online:
+            desktopStatusIconId = emojis["desktop online"]
+          elif user.desktop_status == discord.Status.do_not_disturb or user.desktop_status == discord.Status.dnd:
+            desktopStatusIconId = emojis["desktop do not disturb"]
+          elif user.desktop_status == discord.Status.idle:
+            desktopStatusIconId = emojis["desktop idle"]
+          desktopStatusIcon = self.bot.get_emoji(desktopStatusIconId)
+          desktopStatus = f"{desktopStatusIcon} "
+        webStatus = ""
+        if user.web_status != discord.Status.offline:
+          if user.web_status == discord.Status.online:
+            webStatusIconId = emojis["web online"]
+          elif user.web_status == discord.Status.dnd:
+            webStatusIconId = emojis["web do not disturb"]
+          elif user.web_status == discord.Status.idle:
+            webStatusIconId = emojis["web idle"]
+          webStatusIcon = self.bot.get_emoji(webStatusIconId)
+          webStatus = f"{webStatusIcon} "
+        mobileStatus = ""
+        if user.mobile_status != discord.Status.offline:
+          if user.mobile_status == discord.Status.online:
+            mobileStatusIconId = emojis["mobile online"]
+          elif user.mobile_status == discord.Status.dnd:
+            mobileStatusIconId = emojis["mobile do not disturb"]
+          elif user.mobile_status == discord.Status.idle:
+            mobileStatusIconId = emojis["mobile idle"]
+          mobileStatusIcon = self.bot.get_emoji(mobileStatusIconId)
+          mobileStatus = f"{mobileStatusIcon}"
+        userPublicFlagsStr = []
+        userPublicFlagsList = user.public_flags.all()
+        if not user.bot:
+          for flag in userPublicFlagsList:
+            if flag.name in emojis:
+              flagIcon = self.bot.get_emoji(emojis[flag.name])
+              userPublicFlagsStr.append(str(flagIcon))
+        else:
+          if user.public_flags.verified_bot:
+            left = self.bot.get_emoji(emojis["verified_bot_left"])
+            right = self.bot.get_emoji(emojis["verified_bot_right"])
+            userPublicFlagsStr.append(f"{left}{right}")
+          else:
+            flagIcon = self.bot.get_emoji(emojis["bot"])
+            userPublicFlagsStr.append(str(flagIcon))
+        userPublicFlags = " ".join(userPublicFlagsStr)
         guild = interaction.guild
         botMember = guild.me
         owner = guild.get_member(self.bot.owner_id)
@@ -329,7 +378,7 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
             currentVersion = activity.state.split()[1]
             break
         embed = discord.Embed(
-          title = self.bot.user.display_name,
+          title = f"{self.bot.user.display_name} {desktopStatus}{webStatus}{mobileStatus}{userPublicFlags}",
           description = f"""
           **Developer** : {botOwner}
           **Developer ID** : ||` 1057104290600189972 `||
@@ -392,6 +441,113 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
   async def get_profile(self, interaction : discord.Interaction, member : discord.Member):
     try:
       emojis = self.emojis
+      guild = interaction.guild
+      if member == self.bot.user:
+        response = interaction.response
+        user = guild.get_member(member.id)
+        desktopStatus = ""
+        if user.desktop_status != discord.Status.offline:
+          if user.desktop_status == discord.Status.online:
+            desktopStatusIconId = emojis["desktop online"]
+          elif user.desktop_status == discord.Status.do_not_disturb or user.desktop_status == discord.Status.dnd:
+            desktopStatusIconId = emojis["desktop do not disturb"]
+          elif user.desktop_status == discord.Status.idle:
+            desktopStatusIconId = emojis["desktop idle"]
+          desktopStatusIcon = self.bot.get_emoji(desktopStatusIconId)
+          desktopStatus = f"{desktopStatusIcon} "
+        webStatus = ""
+        if user.web_status != discord.Status.offline:
+          if user.web_status == discord.Status.online:
+            webStatusIconId = emojis["web online"]
+          elif user.web_status == discord.Status.dnd:
+            webStatusIconId = emojis["web do not disturb"]
+          elif user.web_status == discord.Status.idle:
+            webStatusIconId = emojis["web idle"]
+          webStatusIcon = self.bot.get_emoji(webStatusIconId)
+          webStatus = f"{webStatusIcon} "
+        mobileStatus = ""
+        if user.mobile_status != discord.Status.offline:
+          if user.mobile_status == discord.Status.online:
+            mobileStatusIconId = emojis["mobile online"]
+          elif user.mobile_status == discord.Status.dnd:
+            mobileStatusIconId = emojis["mobile do not disturb"]
+          elif user.mobile_status == discord.Status.idle:
+            mobileStatusIconId = emojis["mobile idle"]
+          mobileStatusIcon = self.bot.get_emoji(mobileStatusIconId)
+          mobileStatus = f"{mobileStatusIcon}"
+        userPublicFlagsStr = []
+        userPublicFlagsList = user.public_flags.all()
+        if not user.bot:
+          for flag in userPublicFlagsList:
+            if flag.name in emojis:
+              flagIcon = self.bot.get_emoji(emojis[flag.name])
+              userPublicFlagsStr.append(str(flagIcon))
+        else:
+          if user.public_flags.verified_bot:
+            left = self.bot.get_emoji(emojis["verified_bot_left"])
+            right = self.bot.get_emoji(emojis["verified_bot_right"])
+            userPublicFlagsStr.append(f"{left}{right}")
+          else:
+            flagIcon = self.bot.get_emoji(emojis["bot"])
+            userPublicFlagsStr.append(str(flagIcon))
+        userPublicFlags = " ".join(userPublicFlagsStr)
+        guild = interaction.guild
+        botMember = guild.me
+        owner = guild.get_member(self.bot.owner_id)
+        if owner is not None:
+          botOwner = owner.mention
+        else:
+          botOwner = "` demoutrei `"
+        user2 = guild.me
+        currentVersion = ""
+        for activity in user2.activities:
+          if isinstance(activity, discord.CustomActivity):
+            currentVersion = activity.state.split()[1]
+            break
+        embed = discord.Embed(
+          title = f"{self.bot.user.display_name} {desktopStatus}{webStatus}{mobileStatus}{userPublicFlags}",
+          description = f"""
+          **Developer** : {botOwner}
+          **Developer ID** : ||` 1057104290600189972 `||
+          **User ID** : ||` {self.bot.user.id} `||
+          **Created** : <t:{int(self.bot.user.created_at.timestamp())}:R>
+          **Joined** : <t:{int(botMember.joined_at.timestamp())}:R>
+          """,
+          color = 0x2b2d31
+        ).set_thumbnail(
+          url = self.bot.user.display_avatar
+        ).add_field(
+          name = "Current Version :",
+          value = f"> ` {currentVersion} `",
+          inline = True
+        ).add_field(
+          name = "Command Prefix :",
+          value = "> ` demo.<command_name> `",
+          inline = True
+        ).add_field(
+          name = "Guild Count :",
+          value = f"> ` {len(self.bot.guilds):,} `",
+          inline = True
+        ).add_field(
+          name = "User Count :",
+          value = f"> ` {len(self.bot.users):,} `",
+          inline = True
+        ).add_field(
+          name = "Online Since :",
+          value = f"> <t:{int(self.startup.timestamp())}:R>",
+          inline = True
+        )
+        view = ui.View().add_item(
+          ui.Button(
+            label = "Support Server",
+            url = "https://discord.gg/mXSXzc4SJB"
+          )
+        )
+        await response.send_message(
+          embed = embed,
+          view = view
+        )
+        return
       user = interaction.guild.get_member(member.id)
       user2 = await self.bot.fetch_user(user.id)
       response = interaction.response
