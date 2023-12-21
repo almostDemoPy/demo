@@ -19,10 +19,10 @@ class RingTheBellView(ui.View):
   async def hammer(self, interaction, button):
     response = interaction.response
     user = interaction.user
-    arcade = ArcadeBalance(user)
-    if arcade.balance < 5:
+    economy = Economy(user)
+    if economy.arcades.balance < 5:
       err = discord.Embed(
-        description = f"You currently have ` {arcade.balance} ` democoins ! You need ` 5 ` democoins to play !",
+        description = f"You currently have ` {economy.arcades.balance} ` democoins ! You need ` 5 ` democoins to play !",
         color = 0xff3131
       ).set_author(
         name = self.bot.user.display_name,
@@ -62,6 +62,7 @@ class RingTheBellView(ui.View):
       name = user.display_name,
       icon_url = user.display_avatar
     )
+    economy.arcades.subtract(5)
     await response.edit_message(
       embed = embed,
       view = None
