@@ -537,7 +537,75 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
       icon = image
     )
     embed = discord.Embed(
-      description = "Successfully changed guild property : ` icon `",
+      description = "Successfully edited guild property : ` icon `",
+      color = 0x39ff14
+    ).set_author(
+      name = self.bot.user.display_name,
+      icon_url = self.bot.user.display_avatar
+    )
+    await followup.send(
+      embed = embed
+    )
+
+  @app_commands.command(
+    name = "banner",
+    description = "Change the current guild's banner"
+  )
+  @app_commands.describe(
+    image = "New banner :"
+  )
+  @app_commands.default_permissions(
+    administrator = True
+  )
+  @app_commands.checks.cooldown(
+    1, 300
+  )
+  async def guildEditBanner(
+    self,
+    interaction : discord.Interaction,
+    image : discord.Attachment = None
+  ):
+    response = interaction.response
+    user = interaction.user
+    guild = interaction.guild
+    if user != interaction.guild.owner:
+      err = discord.Embed(
+        description = "Only the Guild Owner can execute this command",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    if "BANNER" not in guild.features:
+      err = discord.Embed(
+        description = "This server does not support guild banners yet",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    if image is not None:
+      image = await image.read()
+    await response.defer(
+      ephemeral = True,
+      thinking = True
+    )
+    followup = interaction.followup
+    await guild.edit(
+      banner = image
+    )
+    embed = discord.Embed(
+      description = "Successfully edited guild property : ` banner `",
       color = 0x39ff14
     ).set_author(
       name = self.bot.user.display_name,
@@ -573,6 +641,7 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
   @guildEditName.error
   @guildEditDescription.error
   @guildEditIcon.error
+  @guildEditBanner.error
   async def error(self, interaction : discord.Interaction, error):
     response = interaction.response
     traceback.print_exc()
@@ -590,11 +659,12 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
       )
       return
     elif isinstance(error, app_commands.CommandOnCooldown):
-      timeLeft = timedelta(
+      timeDiff = timedelta(
         seconds = int(error.retry_after)
       )
+      timeLeft = datetime.now() + timeDiff
       err = discord.Embed(
-        description = f"You can only modify the guild every ` 5 minutes `, try again <t:{int(timeLeft.total_seconds())}:R>",
+        description = f"You can only modify the guild every ` 5 minutes `, try again <t:{int(timeLeft.timestamp())}:R>",
         color = 0xff3131
       ).set_author(
         name = self.bot.user.display_name,
