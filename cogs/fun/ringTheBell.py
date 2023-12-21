@@ -87,10 +87,10 @@ class RingTheBell(commands.GroupCog, name = "ring", description = "ring the bell
   async def ringTheBell(self, interaction : discord.Interaction):
     response = interaction.response
     user = interaction.user
-    arcade = ArcadeBalance(user)
-    if arcade.balance < 5:
+    economy = Economy(user)
+    if economy.arcades.balance < 5:
       err = discord.Embed(
-        description = f"You currently have ` {arcade.balance} ` democoins ! You need ` 5 ` democoins to play !",
+        description = f"You currently have ` {economy.arcades.balance} ` democoins ! You need ` 5 ` democoins to play !",
         color = 0xff3131
       ).set_author(
         name = self.bot.user.display_name,
