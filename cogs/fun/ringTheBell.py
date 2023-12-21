@@ -1,6 +1,7 @@
 import discord
 import random
 import traceback
+from db import *
 from discord import app_commands, ui
 from discord.ext import commands
 
@@ -18,6 +19,20 @@ class RingTheBellView(ui.View):
   async def hammer(self, interaction, button):
     response = interaction.response
     user = interaction.user
+    arcade = ArcadeBalance(user)
+    if arcade.balance < 5:
+      err = discord.Embed(
+        description = f"You currently have ` {arcade.balance} ` democoins ! You need ` 5 ` democoins to play !",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
     if user != self.user:
       err = discord.Embed(
         description = "This is not your game !",
@@ -72,6 +87,20 @@ class RingTheBell(commands.GroupCog, name = "ring", description = "ring the bell
   async def ringTheBell(self, interaction : discord.Interaction):
     response = interaction.response
     user = interaction.user
+    arcade = ArcadeBalance(user)
+    if arcade.balance < 5:
+      err = discord.Embed(
+        description = f"You currently have ` {arcade.balance} ` democoins ! You need ` 5 ` democoins to play !",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
     embed = discord.Embed(
       description = """
       Tap the hammer and give it all your strength to ring the bell !
