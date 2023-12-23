@@ -14,7 +14,7 @@ bot = commands.Bot(
   activity = discord.Activity(
     type = discord.ActivityType.custom,
     name = " ",
-    state = "Version 5.2"
+    state = "Version 5.4"
   )
 )
 
@@ -30,7 +30,8 @@ async def main():
   await load()
   async with bot:
     await bot.start(
-      os.getenv("token")
+      os.getenv("token"),
+      reconnect = True
     )
 
 try:
