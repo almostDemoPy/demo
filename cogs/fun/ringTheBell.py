@@ -1,7 +1,7 @@
 import discord
 import random
 import traceback
-from db import *
+from assets.db import *
 from discord import app_commands, ui
 from discord.ext import commands
 
