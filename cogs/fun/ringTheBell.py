@@ -22,7 +22,7 @@ class RingTheBellView(ui.View):
     economy = Economy(user)
     if economy.arcades.balance < 5:
       err = discord.Embed(
-        description = f"You currently have ` {economy.arcades.balance} ` democoins ! You need ` 5 ` democoins to play !",
+        description = f"You currently have ` {economy.arcades.balance} ` arcade coins ! You need ` 5 ` arcade coins to play !",
         color = 0xff3131
       ).set_author(
         name = self.bot.user.display_name,
@@ -91,7 +91,7 @@ class RingTheBell(commands.GroupCog, name = "ring", description = "ring the bell
     economy = Economy(user)
     if economy.arcades.balance < 5:
       err = discord.Embed(
-        description = f"You currently have ` {economy.arcades.balance} ` democoins ! You need ` 5 ` democoins to play !",
+        description = f"You currently have ` {economy.arcades.balance} ` arcade coins ! You need ` 5 ` arcade coins to play !",
         color = 0xff3131
       ).set_author(
         name = self.bot.user.display_name,
