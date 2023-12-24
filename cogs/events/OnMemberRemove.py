@@ -7,6 +7,7 @@ from discord.ext import commands
 class OnMemberRemove(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
+    print("Loaded event listener\t: on_member_remove")
 
   @commands.command()
   @commands.is_owner()
