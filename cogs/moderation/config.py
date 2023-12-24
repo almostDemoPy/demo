@@ -1,3 +1,4 @@
+import asyncio
 import discord
 import traceback
 from assets.db import *
@@ -168,6 +169,26 @@ class GuildConfig(commands.GroupCog, name = "config", description = "guild confi
       app_commands.Choice(
         name = "OnMessageEdit",
         value = "OnMessageEdit"
+      ),
+      app_commands.Choice(
+        name = "OnMessageDelete",
+        value = "OnMessageDelete"
+      ),
+      app_commands.Choice(
+        name = "OnMemberRemove",
+        value = "OnMemberRemove"
+      ),
+      app_commands.Choice(
+        name = "OnMemberUpdate",
+        value = "OnMemberUpdate"
+      ),
+      app_commands.Choice(
+        name = "OnMemberBan",
+        value = "OnMemberBan"
+      ),
+      app_commands.Choice(
+        name = "OnMemberUnban",
+        value = "OnMemberUnban"
       )
     ]
   )
@@ -234,9 +255,204 @@ class GuildConfig(commands.GroupCog, name = "config", description = "guild confi
         ephemeral = True
       )
 
+  _description = app_commands.Group(
+    name = "description",
+    description = "config description commands"
+  )
+
+  @_description.command(
+    name = "welcome",
+    description = "Configure this guild's welcomer description"
+  )
+  @app_commands.default_permissions(
+    administrator = True
+  )
+  async def configDescriptionWelcome(
+    self,
+    interaction : discord.Interaction
+  ):
+    response = interaction.response
+    user = interaction.user
+    guild = interaction.guild
+    if user != guild.owner:
+      err = discord.Embed(
+        description = "Only the Guild Owner can execute this command",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    config = Config(guild)
+    embed = discord.Embed(
+      description = """
+      Please reply with the new welcomer description below :
+      """,
+      color = 0x2b2d31
+    ).set_author(
+      name = user.display_name,
+      icon_url = user.display_avatar
+    ).add_field(
+      name = "Old Welcome Description :",
+      value = f"{config.welcome.description}",
+      inline = False
+    ).add_field(
+      name = "Syntaxes :",
+      value = """
+      ` {member.mention} ` : mention the member
+      ` {guild.name} ` : get the current guild name
+      """
+    ).set_footer(
+      text = "Timeout : 10 minutes"
+    )
+    await response.send_message(
+      embed = embed
+    )
+    origRes = await interaction.original_response()
+    msg = None
+    while msg is None:
+      def messageCheck(message):
+        if message.reference is None:
+          return False
+        return message.author == user and message.channel == interaction.channel and message.reference.message_id == origRes.to_reference().message_id
+      try:
+        msg = await self.bot.wait_for(
+          "message",
+          check = messageCheck,
+          timeout = 600
+        )
+      except asyncio.TimeoutError:
+        err = discord.Embed(
+          description = "Action Timed Out",
+          color = 0xff3131
+        ).set_author(
+          name = self.bot.user.display_name,
+          icon_url = self.bot.user.display_avatar
+        )
+        await interaction.edit_original_response(
+          embed = err
+        )
+        return
+    newDescription = msg.content
+    config.welcome.set_description(newDescription)
+    embed = discord.Embed(
+      description = f"""
+      Successfully set ` Welcome Description ` to :
+
+      {newDescription}
+      """,
+      color = 0x39ff14
+    ).set_author(
+      name = self.bot.user.display_name,
+      icon_url = self.bot.user.display_avatar
+    )
+    await interaction.edit_original_response(
+      embed = embed
+    )
+
+  @_description.command(
+    name = "farewell",
+    description = "Configure this guild's farewell description"
+  )
+  @app_commands.default_permissions(
+    administrator = True
+  )
+  async def configDescriptionFarewell(
+    self,
+    interaction : discord.Interaction
+  ):
+    response = interaction.response
+    user = interaction.user
+    guild = interaction.guild
+    if user != guild.owner:
+      err = discord.Embed(
+        description = "Only the Guild Owner can execute this command",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
+    config = Config(guild)
+    embed = discord.Embed(
+      description = """
+      Please reply with the new farewell description below :
+      """,
+      color = 0x2b2d31
+    ).set_author(
+      name = user.display_name,
+      icon_url = user.display_avatar
+    ).add_field(
+      name = "Old Farewell Description :",
+      value = f"{config.farewell.description}",
+      inline = False
+    ).add_field(
+      name = "Syntaxes :",
+      value = """
+      ` {member.mention} ` : mention the member
+      ` {guild.name} ` : get the current guild name
+      """
+    ).set_footer(
+      text = "Timeout : 10 minutes"
+    )
+    await response.send_message(
+      embed = embed
+    )
+    origRes = await interaction.original_response()
+    msg = None
+    while msg is None:
+      def messageCheck(message):
+        if message.reference is None:
+          return False
+        return message.author == user and message.channel == interaction.channel and message.reference.message_id == origRes.to_reference().message_id
+      try:
+        msg = await self.bot.wait_for(
+          "message",
+          check = messageCheck,
+          timeout = 600
+        )
+      except asyncio.TimeoutError:
+        err = discord.Embed(
+          description = "Action Timed Out",
+          color = 0xff3131
+        ).set_author(
+          name = self.bot.user.display_name,
+          icon_url = self.bot.user.display_avatar
+        )
+        await interaction.edit_original_response(
+          embed = err
+        )
+        return
+    newDescription = msg.content
+    config.farewell.set_description(newDescription)
+    embed = discord.Embed(
+      description = f"""
+      Successfully set ` Welcome Description ` to :
+
+      {newDescription}
+      """,
+      color = 0x39ff14
+    ).set_author(
+      name = self.bot.user.display_name,
+      icon_url = self.bot.user.display_avatar
+    )
+    await interaction.edit_original_response(
+      embed = embed
+    )
+
   @configChannelWelcome.error
   @configChannelFarewell.error
   @configChannelLogs.error
+  @configDescriptionWelcome.error
+  @configDescriptionFarewell.error
   async def error(self, interaction : discord.Interaction, error):
     traceback.print_exc()
 
