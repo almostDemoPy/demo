@@ -80,10 +80,11 @@ class Steal(commands.Cog):
       )
       return
     stolen = random.randint(1, economyM.democoins)
+    percentage = (stolen / economyM.democoins) * 100
     newBalance = economyU.add(stolen)
     economyM.subtract(stolen)
     embed = discord.Embed(
-      description = f"Successfully stole some democoins from {member.mention}",
+      description = f"Successfully stole **{percentage} %%** of {member.mention}'s democoins",
       color = 0x39ff14
     ).set_author(
       name = user.display_name,
