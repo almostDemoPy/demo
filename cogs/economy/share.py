@@ -25,6 +25,19 @@ class Share(commands.Cog):
   ):
     response = interaction.response
     user = interaction.user
+    if member.bot:
+      err = discord.Embed(
+        description = "You cannot share coins with a bot",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
     economyU = Economy(user)
     economyM = Economy(member)
     if amount > economyU.democoins:
