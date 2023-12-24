@@ -11,10 +11,10 @@ class Exchange(commands.Cog):
 
   @app_commands.command(
     name = "exchange",
-    description = "Exchange your democoins to other currencies"
+    description = "Exchange your democoins for other currencies"
   )
   @app_commands.describe(
-    currency = "Current to exchange your democoins to",
+    currency = "Currency to exchange your democoins to",
     amount = "Amount of currency to exchange"
   )
   @app_commands.choices(
