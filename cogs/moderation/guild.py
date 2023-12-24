@@ -155,6 +155,7 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
     print("Loaded command\t\t: /guild edit name")
     print("Loaded command\t\t: /guild edit description")
     print("Loaded command\t\t: /guild edit icon")
+    print("Loaded command\t\t: /guild edit banner")
 
   emoji = app_commands.Group(
     name = "emoji",

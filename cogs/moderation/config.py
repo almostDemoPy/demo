@@ -7,6 +7,9 @@ from discord.ext import commands
 class GuildConfig(commands.GroupCog, name = "config", description = "guild config commands"):
   def __init__(self, bot):
     self.bot = bot
+    print("Loaded command\t\t: /config channel welcome")
+    print("Loaded command\t\t: /config channel farewell")
+    print("Loaded command\t\t: /config channel logs")
 
   channel = app_commands.Group(
     name = "channel",
