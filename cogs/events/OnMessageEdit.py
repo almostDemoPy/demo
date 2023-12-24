@@ -15,6 +15,8 @@ class OnMessageEdit(commands.Cog):
     try:
       guild = before.guild
       author = before.author
+      if author.bot:
+        return
       if get_config(guild.id):
         config = Config(guild)
         if config.logs.on_message_edit.channel_id is not None:
