@@ -126,7 +126,7 @@ class Demo(commands.GroupCog, name = "demo", description = "demo commands"):
   async def demoInvite(self, interaction : discord.Interaction):
     response = interaction.response
     user = interaction.user
-    invite = "https://discord.com/api/oauth2/authorize?client_id=1169799947021975633&permissions=1632222178374&scope=bot+applications.commands"
+    invite = "https://discord.com/api/oauth2/authorize?client_id=1169799947021975633&permissions=1633832791110&scope=bot+applications.commands"
     embed = discord.Embed(
       title = self.bot.user.display_name,
       description = f"Want to try {self.bot.user.mention} in your server ? Invite him now !",
