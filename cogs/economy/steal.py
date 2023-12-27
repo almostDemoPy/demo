@@ -84,7 +84,7 @@ class Steal(commands.Cog):
     newBalance = economyU.add(stolen)
     economyM.subtract(stolen)
     embed = discord.Embed(
-      description = f"Successfully stole **{percentage} %%** of {member.mention}'s democoins",
+      description = f"Successfully stole **{percentage} %** of {member.mention}'s democoins",
       color = 0x39ff14
     ).set_author(
       name = user.display_name,
