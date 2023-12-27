@@ -768,6 +768,8 @@ class Games(commands.Cog):
         embed = embed,
         view = TextSelectSide(user, member, self.bot)
       )
+    if member is None:
+      member = self.bot.user
     newData = {
       str(user.id): member.id,
       str(member.id): user.id
