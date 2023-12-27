@@ -768,13 +768,13 @@ class Games(commands.Cog):
         embed = embed,
         view = TextSelectSide(user, member, self.bot)
       )
-      newData = {
-        str(user.id): member.id,
-        str(member.id): user.id
-      }
-      games["chess"].update(newData)
-      with open('json/games.json', 'w') as f:
-        json.dump(games, f, indent = 2)
+    newData = {
+      str(user.id): member.id,
+      str(member.id): user.id
+    }
+    games["chess"].update(newData)
+    with open('json/games.json', 'w') as f:
+      json.dump(games, f, indent = 2)
 
   @playChess.error
   async def error(self, interaction : discord.Interaction, error):
