@@ -24,10 +24,10 @@ class TextSelectSide(ui.View):
 
   async def startGame(self, interaction : discord.Interaction, side : str):
     try:
-      with open('json/chessEmojis.json', 'r') as f:
+      with open('json/chessmojis.json', 'r') as f:
         emojis = json.load(f)
-      with open('json/games.json', 'r') as f:
-        games = json.load(f)
+      with open('json/games2.json', 'r') as f:
+        games2 = json.load(f)
       players = {
         str(self.user.id): None,
         str(self.member.id): None
@@ -61,10 +61,10 @@ class TextSelectSide(ui.View):
           await self.boardMsg.edit(
             embed = embed
           )
-          del games["chess"][str(self.user.id)]
-          del games["chess"][str(self.member.id)]
-          with open('json/games.json', 'w') as f:
-            json.dump(games, f, indent = 2)
+          del games2["chess"][str(self.user.id)]
+          del games2["chess"][str(self.member.id)]
+          with open('json/games2.json', 'w') as f:
+            json.dump(games2, f, indent = 2)
           await self.boardThread.delete()
           break
         currentTurn = "white" if self.board.turn == chess.WHITE else "black"
@@ -225,7 +225,7 @@ class TextSelectSide(ui.View):
     style = discord.ButtonStyle.primary
   )
   async def selectWhiteSide(self, interaction : discord.Interaction, button : ui.Button):
-    with open('json/chessEmojis.json', 'r') as f:
+    with open('json/chessmojis.json', 'r') as f:
       emojis = json.load(f)
     response = interaction.response
     await response.defer()
@@ -321,7 +321,7 @@ class TextSelectSide(ui.View):
     style = discord.ButtonStyle.primary
   )
   async def selectBlackSide(self, interaction : discord.Interaction, button : ui.Button):
-    with open('json/chessEmojis.json', 'r') as f:
+    with open('json/chessmojis.json', 'r') as f:
       emojis = json.load(f)
     response = interaction.response
     user = interaction.user
@@ -663,7 +663,7 @@ class RPSGame(ui.View):
   async def on_error(self, interaction : discord.Interaction, error):
     traceback.print_exc()
 
-class Games(commands.Cog):
+class games2(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
     print("Loaded command\t\t: /play chess")
@@ -680,14 +680,14 @@ class Games(commands.Cog):
     member = "Select your opponent :"
   )
   async def playChess(self, interaction : discord.Interaction, member : discord.Member = None):
-    with open('json/chessEmojis.json', 'r') as f:
-      chessEmojis = json.load(f)
-    with open('json/games.json', 'r') as f:
-      games = json.load(f)
+    with open('json/chessmojis.json', 'r') as f:
+      chessmojis = json.load(f)
+    with open('json/games2.json', 'r') as f:
+      games2 = json.load(f)
     response = interaction.response
     user = interaction.user
-    if str(user.id) in games["chess"]:
-      opponent = await self.bot.fetch_user(games["chess"][str(user.id)])
+    if str(user.id) in games2["chess"]:
+      opponent = await self.bot.fetch_user(games2["chess"][str(user.id)])
       err = discord.Embed(
         description = f"You are currently playing  a game with {opponent.mention} ! You cannot create another game for now",
         color = 0xff3131
@@ -774,9 +774,9 @@ class Games(commands.Cog):
       str(user.id): member.id,
       str(member.id): user.id
     }
-    games["chess"].update(newData)
-    with open('json/games.json', 'w') as f:
-      json.dump(games, f, indent = 2)
+    games2["chess"].update(newData)
+    with open('json/games2.json', 'w') as f:
+      json.dump(games2, f, indent = 2)
 
   @playChess.error
   async def error(self, interaction : discord.Interaction, error):
@@ -787,10 +787,10 @@ class Games(commands.Cog):
     description = "End your current game of Chess"
   )
   async def end(self, ctx):
-    with open('json/games.json', 'r') as f:
-      games = json.load(f)
+    with open('json/games2.json', 'r') as f:
+      games2 = json.load(f)
     user = ctx.author
-    if str(user.id) not in games["chess"]:
+    if str(user.id) not in games2["chess"]:
       err = discord.Embed(
         description = f"{user.mention}, You aren't playing a game of Chess with anyone !",
         color = 0xff3131
@@ -804,7 +804,7 @@ class Games(commands.Cog):
         delete_after = 10
       )
       return
-    opponent = await self.bot.fetch_user(games["chess"][str(user.id)])
+    opponent = await self.bot.fetch_user(games2["chess"][str(user.id)])
     boardMsg = None
     if isinstance(ctx.channel, discord.Thread):
       err = discord.Embed(
@@ -843,10 +843,10 @@ class Games(commands.Cog):
     else:
       if boardMsg.embeds[0].title.endswith("ended the game"):
         return
-      del games["chess"][str(user.id)]
-      del games["chess"][str(opponent.id)]
-      with open('json/games.json', 'w') as f:
-        json.dump(games, f, indent = 2)
+      del games2["chess"][str(user.id)]
+      del games2["chess"][str(opponent.id)]
+      with open('json/games2.json', 'w') as f:
+        json.dump(games2, f, indent = 2)
       embed = boardMsg.embeds[0].copy()
       embed.title = f"{user.display_name} ended the game"
       await boardMsg.edit(
@@ -875,10 +875,10 @@ class Games(commands.Cog):
     description = "Resign from your game"
   )
   async def resign(self, ctx):
-    with open('json/games.json', 'r') as f:
-      games = json.load(f)
+    with open('json/games2.json', 'r') as f:
+      games2 = json.load(f)
     user = ctx.author
-    if str(user.id) not in games["chess"]:
+    if str(user.id) not in games2["chess"]:
       err = discord.Embed(
         description = f"{user.mention}, You aren't playing a game of Chess with anyone !",
         color = 0xff3131
@@ -892,7 +892,7 @@ class Games(commands.Cog):
         delete_after = 10
       )
       return
-    opponent = await self.bot.fetch_user(games["chess"][str(user.id)])
+    opponent = await self.bot.fetch_user(games2["chess"][str(user.id)])
     boardMsg = None
     if isinstance(ctx.channel, discord.Thread):
       err = discord.Embed(
@@ -931,10 +931,10 @@ class Games(commands.Cog):
     else:
       if boardMsg.embeds[0].title.endswith("won !"):
         return
-      del games["chess"][str(user.id)]
-      del games["chess"][str(opponent.id)]
-      with open('json/games.json', 'w') as f:
-        json.dump(games, f, indent = 2)
+      del games2["chess"][str(user.id)]
+      del games2["chess"][str(opponent.id)]
+      with open('json/games2.json', 'w') as f:
+        json.dump(games2, f, indent = 2)
       embed = boardMsg.embeds[0].copy()
       embed.title = f"{user.display_name} resigned. {opponent.display_name} won !"
       await boardMsg.edit(
@@ -1187,4 +1187,4 @@ class Games(commands.Cog):
     traceback.print_exc()
 
 async def setup(bot):
-  await bot.add_cog(Games(bot))
+  await bot.add_cog(games2(bot))
