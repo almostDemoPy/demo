@@ -32,6 +32,26 @@ class OnMessageEdit(commands.Cog):
               if wh.user == self.bot.user:
                 webhook = wh
                 break
+          if after.pinned:
+            embed = discord.Embed(
+              title = "Message Pinned :",
+              description = after.content if str(after.content) != "" else "` No content provided `",
+              color = 0x2b2d31
+            )
+            view = ui.View().add_item(
+              ui.Button(
+                label = "Jump to Message",
+                url = before.jump_url
+              )
+            )
+            await webhook.send(
+              embed = embed,
+              view = view,
+              files = [await attachment.to_file() for attachment in after.attachments],
+              username = author.display_name,
+              avatar_url = author.display_avatar
+            )
+            return
           beforeEmbed = discord.Embed(
             title = "Before :",
             description = "` No content provided `" if before.content == "" else before.content,
