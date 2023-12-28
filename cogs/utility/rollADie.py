@@ -20,7 +20,7 @@ class RollADie(commands.GroupCog, name = "roll", description = "roll a die comma
   )
   @app_commands.describe(
     count = "Amount of dice to roll",
-    sides = "Nth-sided dice to roll"
+    sides = "N-sided dice to roll"
   )
   async def rollADie(
     self,
