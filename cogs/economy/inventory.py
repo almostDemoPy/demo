@@ -106,9 +106,9 @@ class Inventory(commands.Cog):
     description = "Check your inventory"
   )
   @app_commands.describe(
-    item = "Item to check"
+    name = "Name of item to check"
   )
-  async def inventory(self, interaction : discord.Interaction, item : str = None):
+  async def inventory(self, interaction : discord.Interaction, name : str = None):
     response = interaction.response
     user = interaction.user
     economy = Economy(user)
@@ -125,6 +125,48 @@ class Inventory(commands.Cog):
         ephemeral = True
       )
       return
+    if name is not None:
+      item = get_item(name)
+      if item is None:
+        err = discord.Embed(
+          description = f"There is no such item named ` {name} `",
+          color = 0xff3131
+        ).set_author(
+          name = self.bot.user.display_name,
+          icon_url = self.bot.user.display_avatar
+        )
+        await response.send_message(
+          embed = err,
+          ephemeral = True
+        )
+        return
+      else:
+        if economy.inventory.get_item(name) is None:
+          err = discord.Embed(
+            description = f"You have not obtained a / an ` {Item(name).name} ` yet",
+            color = 0xff3131
+          ).set_author(
+            name = self.bot.user.display_name,
+            icon_url = self.bot.user.display_avatar
+          )
+          await response.send_message(
+            embed = err,
+            ephemeral = True
+          )
+          return
+        else:
+          item, count = economy.inventory.get_item(name)
+          embed = discord.Embed(
+            description = f"You currently have ` {count:,} ` **{item}**",
+            color = 0x2b2d31
+          ).set_author(
+            name = user.display_name,
+            icon_url = user.display_avatar
+          )
+          await response.send_message(
+            embed = embed
+          )
+          return
     items = economy.inventory.items
     pos = 10 if len(items) > 10 else len(items)
     description = ""
