@@ -14,7 +14,7 @@ bot = commands.Bot(
   activity = discord.Activity(
     type = discord.ActivityType.custom,
     name = " ",
-    state = "Version 8.0"
+    state = "Version 8.1"
   )
 )
 
