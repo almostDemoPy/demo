@@ -62,7 +62,7 @@ class RingTheBellView(ui.View):
       name = user.display_name,
       icon_url = user.display_avatar
     )
-    economy.arcades.subtract(5)
+    economy.subtract("arcade coins", 5)
     await response.edit_message(
       embed = embed,
       view = None

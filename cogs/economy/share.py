@@ -66,8 +66,8 @@ class Share(commands.Cog):
         ephemeral = True
       )
       return
-    newBalanceU = economyU.subtract(amount)
-    newBalanceM = economyM.add(amount)
+    newBalanceU = economyU.subtract("democoins", amount)
+    newBalanceM = economyM.add("democoins", amount)
     embed = discord.Embed(
       description = f"Successfully gave {member.mention} ` {amount:,} ` democoins",
       color = 0x39ff14

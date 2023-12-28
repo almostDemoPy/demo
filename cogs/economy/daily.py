@@ -22,7 +22,7 @@ class Daily(commands.Cog):
     user = interaction.user
     amount = 5
     economy = Economy(user)
-    newBalance = economy.add(amount)
+    newBalance = economy.add("democoins", amount)
     embed = discord.Embed(
       description = f"Successfully received your daily bonus !",
       color = 0x39ff14

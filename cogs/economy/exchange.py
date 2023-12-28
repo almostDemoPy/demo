@@ -64,8 +64,8 @@ class Exchange(commands.Cog):
         ephemeral = True
       )
       return
-    newDemocoins = economy.subtract(cost)
-    newCurrency = economy.arcades.add(amount)
+    newDemocoins = economy.subtract("democoins", cost)
+    newCurrency = economy.add(currency, amount)
     embed = discord.Embed(
       description = f"Successfully exchanged currencies : ` democoins ` --> ` {currency} `",
       color = 0x39ff14
