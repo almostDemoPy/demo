@@ -244,7 +244,6 @@ class Leaderboard(commands.Cog):
     try:
       lbEmbed = None
       channel = self.globalLeaderboardChannel
-      await channel.purge()
       demoCoinsLb = get_leaderboard("democoins")
       arcadeCoinsLb = get_leaderboard("arcade coins")
       ordinal = lambda n: "%d%s" % (n,"tsnrhtdd"[(n//10%10!=1)*(n%10<4)*n%10::4])
@@ -292,17 +291,33 @@ class Leaderboard(commands.Cog):
           description = description,
           color = 0x2b2d31
         )
-      await channel.send(
-        embeds = [
-          embed1,
-          embed2
-        ],
-        view = GlobalLeaderboardView(
-          self.bot,
-          democoins,
-          arcadeCoins
+      msgID = get_data("global leaderboard message")
+      if msgID is None:
+        message = await channel.send(
+          embeds = [
+            embed1,
+            embed2
+          ],
+          view = GlobalLeaderboardView(
+            self.bot,
+            democoins,
+            arcadeCoins
+          )
         )
-      )
+        update_data("global leaderboard message", message.id)
+      else:
+        msg = await channel.fetch_message(msgID)
+        await msg.edit(
+          embeds = [
+            embed1,
+            embed2
+          ],
+          view = GlobalLeaderboardView(
+            self.bot,
+            democoins,
+            arcadeCoins
+          )
+        )
     except:
       traceback.print_exc()
 
