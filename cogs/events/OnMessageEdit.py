@@ -32,7 +32,7 @@ class OnMessageEdit(commands.Cog):
               if wh.user == self.bot.user:
                 webhook = wh
                 break
-          if after.pinned:
+          if after.pinned and not before.pinned:
             embed = discord.Embed(
               title = "Message Pinned :",
               description = after.content if str(after.content) != "" else "` No content provided `",
