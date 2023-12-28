@@ -41,6 +41,19 @@ class Steal(commands.Cog):
         ephemeral = True
       )
       return
+    if member == user:
+      err = discord.Embed(
+        description = "You cannot steal from yourself !",
+        color = 0xff3131
+      ).set_author(
+        name = self.bot.user.display_name,
+        icon_url = self.bot.user.display_avatar
+      )
+      await response.send_message(
+        embed = err,
+        ephemeral = True
+      )
+      return
     economyU = Economy(user)
     economyM = Economy(member)
     if economyM.democoins == 0:
