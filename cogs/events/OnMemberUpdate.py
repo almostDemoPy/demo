@@ -27,17 +27,17 @@ class OnMemberUpdate(commands.Cog):
           ).add_field(
             name = "Before :",
             value = f"""
-            **Nickname** : ` {before.nickname} `
-            **Avatar** : [` before `](<{before.display_avatar.url}>)
-            **Roles** : {" | ".join([role.mention for role in before.roles])}
+**Nickname** : ` {before.nickname} `
+**Avatar** : [` before `](<{before.display_avatar.url}>)
+**Roles** : {" | ".join([role.mention for role in before.roles])}
             """,
             inline = True
           ).add_field(
             name = "After :",
             value = f"""
-            **Nickname** : ` {after.nickname} `
-            **Avatar** : [` after `](<{after.display_avatar.url}>)
-            **Roles** : {" | ".join([role.mention for role in after.roles])}
+**Nickname** : ` {after.nickname} `
+**Avatar** : [` after `](<{after.display_avatar.url}>)
+**Roles** : {" | ".join([role.mention for role in after.roles])}
             """,
             inline = True
           )

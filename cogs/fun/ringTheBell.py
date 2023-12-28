@@ -104,18 +104,18 @@ class RingTheBell(commands.GroupCog, name = "ring", description = "ring the bell
       return
     embed = discord.Embed(
       description = """
-      Tap the hammer and give it all your strength to ring the bell !
-      🔔
-      🔳
-      🔳
-      🔳
-      🔳
-      🔳
-      🔳
-      🔳
-      🔳
-      🔳
-      🔳
+Tap the hammer and give it all your strength to ring the bell !
+🔔
+🔳
+🔳
+🔳
+🔳
+🔳
+🔳
+🔳
+🔳
+🔳
+🔳
       """,
       color = 0x2b2d31
     ).set_author(

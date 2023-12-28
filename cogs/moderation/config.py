@@ -290,7 +290,7 @@ class GuildConfig(commands.GroupCog, name = "config", description = "guild confi
     config = Config(guild)
     embed = discord.Embed(
       description = """
-      Please reply with the new welcomer description below :
+Please reply with the new welcomer description below :
       """,
       color = 0x2b2d31
     ).set_author(
@@ -303,8 +303,8 @@ class GuildConfig(commands.GroupCog, name = "config", description = "guild confi
     ).add_field(
       name = "Syntaxes :",
       value = """
-      ` {member.mention} ` : mention the member
-      ` {guild.name} ` : get the current guild name
+` {member.mention} ` : mention the member
+` {guild.name} ` : get the current guild name
       """
     ).set_footer(
       text = "Timeout : 10 minutes"
@@ -341,9 +341,9 @@ class GuildConfig(commands.GroupCog, name = "config", description = "guild confi
     config.welcome.set_description(newDescription)
     embed = discord.Embed(
       description = f"""
-      Successfully set ` Welcome Description ` to :
+Successfully set ` Welcome Description ` to :
 
-      {newDescription}
+{newDescription}
       """,
       color = 0x39ff14
     ).set_author(
@@ -384,7 +384,7 @@ class GuildConfig(commands.GroupCog, name = "config", description = "guild confi
     config = Config(guild)
     embed = discord.Embed(
       description = """
-      Please reply with the new farewell description below :
+Please reply with the new farewell description below :
       """,
       color = 0x2b2d31
     ).set_author(
@@ -397,8 +397,8 @@ class GuildConfig(commands.GroupCog, name = "config", description = "guild confi
     ).add_field(
       name = "Syntaxes :",
       value = """
-      ` {member.mention} ` : mention the member
-      ` {guild.name} ` : get the current guild name
+` {member.mention} ` : mention the member
+` {guild.name} ` : get the current guild name
       """
     ).set_footer(
       text = "Timeout : 10 minutes"
@@ -435,9 +435,9 @@ class GuildConfig(commands.GroupCog, name = "config", description = "guild confi
     config.farewell.set_description(newDescription)
     embed = discord.Embed(
       description = f"""
-      Successfully set ` Welcome Description ` to :
+Successfully set ` Welcome Description ` to :
 
-      {newDescription}
+{newDescription}
       """,
       color = 0x39ff14
     ).set_author(

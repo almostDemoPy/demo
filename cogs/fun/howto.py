@@ -40,10 +40,10 @@ class SelectGame(ui.Select):
         embed = discord.Embed(
           title = "How to play Chess",
           description = f"""
-            {self.bot.user.mention}'s Chess functions in algebraic notation. The type of algebraic notation the bot uses comes in two parts : the origin ( or selected ) tile / position of a piece, and the designated tile / position of the selected piece.
+{self.bot.user.mention}'s Chess functions in algebraic notation. The type of algebraic notation the bot uses comes in two parts : the origin ( or selected ) tile / position of a piece, and the designated tile / position of the selected piece.
 
-            **For example :**
-            To move your pawn in tile ` e2 ` to tile ` e4 `, simply do ` e2e4 `. ` e2 ` is the origin tile / position of the pawn, while ` e4 ` is its designated tile.
+**For example :**
+To move your pawn in tile ` e2 ` to tile ` e4 `, simply do ` e2e4 `. ` e2 ` is the origin tile / position of the pawn, while ` e4 ` is its designated tile.
           """,
           color = 0x2b2d31
         ).set_author(

@@ -314,8 +314,8 @@ class Guild(commands.GroupCog, name = "guild", description = "guild commands"):
       embed = discord.Embed(
         title = emoji.name,
         description = f"""
-        **Emoji ID** : ` {emoji.id} `
-        **Created** : <t:{int(emoji.created_at.timestamp())}:R>
+**Emoji ID** : ` {emoji.id} `
+**Created** : <t:{int(emoji.created_at.timestamp())}:R>
         """,
         color = 0x2b2d31
       ).set_thumbnail(

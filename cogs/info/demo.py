@@ -35,11 +35,11 @@ class Demo(commands.GroupCog, name = "demo", description = "demo commands"):
     embed = discord.Embed(
       title = self.bot.user.display_name,
       description = f"""
-      **Developer** : {botOwner}
-      **Developer ID** : ||` 1057104290600189972 `||
-      **User ID** : ||` {self.bot.user.id} `||
-      **Created** : <t:{int(self.bot.user.created_at.timestamp())}:R>
-      **Joined** : <t:{int(botMember.joined_at.timestamp())}:R>
+**Developer** : {botOwner}
+**Developer ID** : ||` 1057104290600189972 `||
+**User ID** : ||` {self.bot.user.id} `||
+**Created** : <t:{int(self.bot.user.created_at.timestamp())}:R>
+**Joined** : <t:{int(botMember.joined_at.timestamp())}:R>
       """,
       color = 0x2b2d31
     ).set_thumbnail(
@@ -91,7 +91,7 @@ class Demo(commands.GroupCog, name = "demo", description = "demo commands"):
     embed = discord.Embed(
       title = guild.name,
       description = f"""
-      Join {self.bot.user.mention}'s support guild for news, updates, reports, suggestions and / or feedbacks ! See you there !{description}
+Join {self.bot.user.mention}'s support guild for news, updates, reports, suggestions and / or feedbacks ! See you there !{description}
       """,
       color = 0x2b2d31
     ).add_field(

@@ -172,7 +172,7 @@ class UserInfoSelectMenu(ui.Select):
             gameEmbed = discord.Embed(
               title = "Playing a Game",
               description = f"""
-  **Name** : ` {activity.name} `{activityDetails}{activityState}{gameStart}{gameEnd}
+**Name** : ` {activity.name} `{activityDetails}{activityState}{gameStart}{gameEnd}
               """,
               color = 0x2b2d31
             ).set_thumbnail(
@@ -380,11 +380,11 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
         embed = discord.Embed(
           title = f"{self.bot.user.display_name} {desktopStatus}{webStatus}{mobileStatus}{userPublicFlags}",
           description = f"""
-          **Developer** : {botOwner}
-          **Developer ID** : ||` 1057104290600189972 `||
-          **User ID** : ||` {self.bot.user.id} `||
-          **Created** : <t:{int(self.bot.user.created_at.timestamp())}:R>
-          **Joined** : <t:{int(botMember.joined_at.timestamp())}:R>
+**Developer** : {botOwner}
+**Developer ID** : ||` 1057104290600189972 `||
+**User ID** : ||` {self.bot.user.id} `||
+**Created** : <t:{int(self.bot.user.created_at.timestamp())}:R>
+**Joined** : <t:{int(botMember.joined_at.timestamp())}:R>
           """,
           color = 0x2b2d31
         ).set_thumbnail(
@@ -507,11 +507,11 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
         embed = discord.Embed(
           title = f"{self.bot.user.display_name} {desktopStatus}{webStatus}{mobileStatus}{userPublicFlags}",
           description = f"""
-          **Developer** : {botOwner}
-          **Developer ID** : ||` 1057104290600189972 `||
-          **User ID** : ||` {self.bot.user.id} `||
-          **Created** : <t:{int(self.bot.user.created_at.timestamp())}:R>
-          **Joined** : <t:{int(botMember.joined_at.timestamp())}:R>
+**Developer** : {botOwner}
+**Developer ID** : ||` 1057104290600189972 `||
+**User ID** : ||` {self.bot.user.id} `||
+**Created** : <t:{int(self.bot.user.created_at.timestamp())}:R>
+**Joined** : <t:{int(botMember.joined_at.timestamp())}:R>
           """,
           color = 0x2b2d31
         ).set_thumbnail(
@@ -690,7 +690,7 @@ class UserCommands(commands.GroupCog, name = "user", description = "user command
             gameEmbed = discord.Embed(
               title = "Playing a Game",
               description = f"""
-  **Name** : ` {activity.name} `{activityDetails}{activityState}{gameStart}{gameEnd}
+**Name** : ` {activity.name} `{activityDetails}{activityState}{gameStart}{gameEnd}
               """,
               color = 0x2b2d31
             ).set_thumbnail(
