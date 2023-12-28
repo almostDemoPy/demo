@@ -557,6 +557,19 @@ class RPSGame(ui.View):
       )
       return
     if user == self.user:
+      if self.userChoice is not None:
+        err = discord.Embed(
+          description = "You already have chosen !",
+          color = 0xff3131
+        ).set_author(
+          name = self.bot.user.display_name,
+          icon_url = self.bot.user.display_avatar
+        )
+        await response.send_message(
+          embed = err,
+          ephemeral = True
+        )
+        return
       self.userChoice = "rock"
       newEmbed = interaction.message.embeds[0].copy()
       newEmbed.set_author(
@@ -567,6 +580,19 @@ class RPSGame(ui.View):
         embed = newEmbed
       )
     else:
+      if self.opponentChoice is not None:
+        err = discord.Embed(
+          description = "You already have chosen !",
+          color = 0xff3131
+        ).set_author(
+          name = self.bot.user.display_name,
+          icon_url = self.bot.user.display_avatar
+        )
+        await response.send_message(
+          embed = err,
+          ephemeral = True
+        )
+        return
       self.opponentChoice = "rock"
       newEmbed = interaction.message.embeds[0].copy()
       newEmbed.set_footer(
@@ -598,6 +624,19 @@ class RPSGame(ui.View):
       )
       return
     if user == self.user:
+      if self.userChoice is not None:
+        err = discord.Embed(
+          description = "You already have chosen !",
+          color = 0xff3131
+        ).set_author(
+          name = self.bot.user.display_name,
+          icon_url = self.bot.user.display_avatar
+        )
+        await response.send_message(
+          embed = err,
+          ephemeral = True
+        )
+        return
       self.userChoice = "paper"
       newEmbed = interaction.message.embeds[0].copy()
       newEmbed.set_author(
@@ -608,6 +647,19 @@ class RPSGame(ui.View):
         embed = newEmbed
       )
     else:
+      if self.opponentChoice is not None:
+        err = discord.Embed(
+          description = "You already have chosen !",
+          color = 0xff3131
+        ).set_author(
+          name = self.bot.user.display_name,
+          icon_url = self.bot.user.display_avatar
+        )
+        await response.send_message(
+          embed = err,
+          ephemeral = True
+        )
+        return
       self.opponentChoice = "paper"
       newEmbed = interaction.message.embeds[0].copy()
       newEmbed.set_footer(
@@ -639,6 +691,19 @@ class RPSGame(ui.View):
       )
       return
     if user == self.user:
+      if self.userChoice is not None:
+        err = discord.Embed(
+          description = "You already have chosen !",
+          color = 0xff3131
+        ).set_author(
+          name = self.bot.user.display_name,
+          icon_url = self.bot.user.display_avatar
+        )
+        await response.send_message(
+          embed = err,
+          ephemeral = True
+        )
+        return
       self.userChoice = "scissors"
       newEmbed = interaction.message.embeds[0].copy()
       newEmbed.set_author(
@@ -649,6 +714,19 @@ class RPSGame(ui.View):
         embed = newEmbed
       )
     else:
+      if self.opponentChoice is not None:
+        err = discord.Embed(
+          description = "You already have chosen !",
+          color = 0xff3131
+        ).set_author(
+          name = self.bot.user.display_name,
+          icon_url = self.bot.user.display_avatar
+        )
+        await response.send_message(
+          embed = err,
+          ephemeral = True
+        )
+        return
       self.opponentChoice = "scissors"
       newEmbed = interaction.message.embeds[0].copy()
       newEmbed.set_footer(
