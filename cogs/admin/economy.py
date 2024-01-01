@@ -54,7 +54,7 @@ class AdminEconomy(commands.Cog):
   ):
     author = ctx.author
     economyM = Economy(member)
-    economyM.subtract(currency, int(amount))
+    economyM.subtract(currency, int(amount) if int(amount) < economyM.currency_balance(currency) else economyM.currency_balance(currency))
     embed = discord.Embed(
       description = f"Successfully deducted ` {amount:,} ` {currency} from {member.mention}",
       color = 0x39ff14
