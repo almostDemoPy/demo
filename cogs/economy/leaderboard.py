@@ -346,9 +346,11 @@ class Leaderboard(commands.Cog):
       demoCoinsLb = get_leaderboard("democoins")
       arcadeCoinsLb = get_leaderboard("arcade coins")
       levellingLb = get_leaderboard("levelling")
+      levellingLb = [id for id in levellingLb if get_lvl(id)["experience"] != 0]
       ordinal = lambda n: "%d%s" % (n,"tsnrhtdd"[(n//10%10!=1)*(n%10<4)*n%10::4])
       democoins = False
       arcadeCoins = False
+      levellingBool = False
       if len(demoCoinsLb) == 0:
         embed1 = discord.Embed(
           description = f"There currently are no leaderboard placements for category ` democoins `",
