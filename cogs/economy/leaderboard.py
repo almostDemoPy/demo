@@ -56,12 +56,16 @@ class GlobalLeaderboardView(ui.View):
     lb5 = lb2
     description = f"Here is your global leaderboard placement for category ` democoins ` :\n\n"
     for ind, ID in enumerate(lb5):
+      ID = int(ID)
       lbUser = self.bot.get_user(ID)
+      if lbUser is None:
+        try:
+          lbUser = await self.bot.fetch_user(ID)
+        except:
+          continue
       lbCategory = get_eco(ID)["democoins"]
       if lbCategory == 0:
         continue
-      if lbUser is None:
-        lbUser = await self.bot.fetch_user(ID)
       description += f"`  {ind + 1} ` | {lbUser.mention} - ` {lbCategory:,} ` democoins\n"
     embed = discord.Embed(
       description = description,
@@ -117,12 +121,16 @@ class GlobalLeaderboardView(ui.View):
     lb5 = lb2
     description = f"Here is your global leaderboard placement for category ` arcade coins ` :\n\n"
     for ind, ID in enumerate(lb5):
+      ID = int(ID)
       lbUser = self.bot.get_user(ID)
+      if lbUser is None:
+        try:
+          lbUser = await self.bot.fetch_user(ID)
+        except:
+          continue
       lbCategory = get_eco(ID)["arcade coins"]
       if lbCategory == 0:
         continue
-      if lbUser is None:
-        lbUser = await self.bot.fetch_user(ID)
       description += f"`  {ind + 1} ` | {lbUser.mention} - ` {lbCategory:,} ` arcade coins\n"
     embed = discord.Embed(
       description = description,
@@ -179,14 +187,18 @@ class GlobalLeaderboardView(ui.View):
     lb5 = lb2
     description = f"Here is your global leaderboard placement for category ` levelling ` :\n\n"
     for ind, ID in enumerate(lb5):
+      ID = int(ID)
       lbUser = self.bot.get_user(ID)
+      if lbUser is None:
+        try:
+          lbUser = await self.bot.fetch_user(ID)
+        except:
+          continue
       userEconomy = Economy(lbUser)
       lbLevel = userEconomy.levelling.level
       lbExperience = economy.levelling.experience
       if lbExperience == 0:
         continue
-      if lbUser is None:
-        lbUser = await self.bot.fetch_user(ID)
       description += f"`  {ind + 1} ` | {lbUser.mention} - ` Level {lbLevel:,} | {lbExperience:,} Experience `\n"
     embed = discord.Embed(
       description = description,
@@ -280,19 +292,27 @@ class Leaderboard(commands.Cog):
     description = f"Here are the **Top 10** users for category ` {category} ` :\n\n"
     if category in ["democoins", "arcade coins"]:
       for ind, ID in enumerate(lbTen):
+        ID = int(ID)
         lbUser = self.bot.get_user(ID)
         lbCategory = get_eco(ID)[category]
         if lbUser is None:
-          lbUser = await self.bot.fetch_user(ID)
+          try:
+            lbUser = await self.bot.fetch_user(ID)
+          except:
+            continue
         description += f"`  {ind + 1} ` | {lbUser.mention} - ` {lbCategory:,} ` {category}\n"
     else:
       for ind, ID in enumerate(lbTen):
+        ID = int(ID)
         lbUser = self.bot.get_user(ID)
+        if lbUser is None:
+          try:
+            lbUser = await self.bot.fetch_user(ID)
+          except:
+            continue
         userEconomy = Economy(lbUser)
         lbLevel = userEconomy.levelling.level
         lbExperience = userEconomy.levelling.experience
-        if lbUser is None:
-          lbUser = await self.bot.fetch_user(ID)
         description += f"`  {ind + 1} ` | {lbUser.mention} - ` Level {lbLevel:,} | {levelExperience:,} Experience `\n"
     ordinal = lambda n: "%d%s" % (n,"tsnrhtdd"[(n//10%10!=1)*(n%10<4)*n%10::4])
     userPlacement = ordinal(lb.index(str(user.id)) + 1)
@@ -339,12 +359,16 @@ class Leaderboard(commands.Cog):
         lbTen = demoCoinsLb[:10]
         description = f"Here are the **Top 10** users for category ` democoins ` :\n\n"
         for ind, ID in enumerate(lbTen):
+          ID = int(ID)
           lbUser = self.bot.get_user(ID)
+          if lbUser is None:
+            try:
+              lbUser = await self.bot.fetch_user(ID)
+            except:
+              continue
           lbCategory = get_eco(ID)["democoins"]
           if lbCategory == 0:
             continue
-          if lbUser is None:
-            lbUser = await self.bot.fetch_user(ID)
           description += f"`  {ind + 1} ` | {lbUser.mention} - ` {lbCategory:,} ` democoins\n"
         embed1 = discord.Embed(
           description = description,
@@ -360,12 +384,16 @@ class Leaderboard(commands.Cog):
         lbTen = arcadeCoinsLb[:10]
         description = f"Here are the **Top 10** users for category ` arcade coins ` :\n\n"
         for ind, ID in enumerate(lbTen):
+          ID = int(ID)
           lbUser = self.bot.get_user(ID)
+          if lbUser is None:
+            try:
+              lbUser = await self.bot.fetch_user(ID)
+            except:
+              continue
           lbCategory = get_eco(ID)["arcade coins"]
           if lbCategory == 0:
             continue
-          if lbUser is None:
-            lbUser = await self.bot.fetch_user(ID)
           description += f"`  {ind + 1} ` | {lbUser.mention} - ` {lbCategory:,} ` arcade coins\n"
         embed2 = discord.Embed(
           description = description,
@@ -381,14 +409,18 @@ class Leaderboard(commands.Cog):
         lbTen = levellingLb[:10]
         description = f"Here are the **Top 10** users for category ` levelling ` :\n\n"
         for ind, ID in enumerate(lbTen):
+          ID = int(ID)
           lbUser = self.bot.get_user(ID)
+          if lbUser is None:
+            try:
+              lbUser = await self.bot.fetch_user(ID)
+            except:
+              continue
           userLevelling = Economy(lbUser).levelling
           lbLevel = userLevelling.level
           lbExperience = userLevelling.experience
           if lbExperience == 0:
             continue
-          if lbUser is None:
-            lbUser = await self.bot.fetch_user(ID)
           description += f"`  {ind + 1} ` | {lbUser.mention} - ` Level {lbLevel:,} | {lbExperience:,} Experience `\n"
         embed3 = discord.Embed(
           description = description,
